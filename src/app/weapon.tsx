@@ -62,13 +62,17 @@ class Weapon extends Item {
             new WeaponPrefix("Broken", 1, 0.5),
             new WeaponPrefix("Shoddy", 1, 0.7),
             new WeaponPrefix("Rusty", 1, 0.8),
+            new WeaponPrefix("Factory Refurbished", 1, 1),
             new WeaponPrefix("Tuned", 1.1, 1.1),
+            new WeaponPrefix("Scintillating", 1, 1.3),
             new WeaponPrefix("Masterwork", 1, 1.5),
         ]
         const potentialModPrefixes = [
+            new WeaponPrefix("Heavy", 0.8, 1.2),
             new WeaponPrefix("Lightweight", 1.2, 0.8),
             new WeaponPrefix("Greasy", 1.1, 1),
             new WeaponPrefix("Aerodynamic", 1.2, 1),
+            new WeaponPrefix("Porous", 1.3, 0.8),
         ]
 
         const potentialMaterials = [

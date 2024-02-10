@@ -1,6 +1,5 @@
 'use client'
 import Image from "next/image";
-import React from 'react';
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
 import {DndContext, DragEndEvent} from '@dnd-kit/core';
@@ -10,6 +9,10 @@ import ItemContainer from './droppable';
 import Item from './item';
 import Weapon from './weapon';
 import dynamic from "next/dynamic";
+
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import { DragDropContext, Droppable, Draggable, Id, OnDragEndResponder, DropResult, DraggableLocation, DraggableStyle } from '@hello-pangea/dnd';
 
 /*
 
@@ -70,6 +73,8 @@ export default function App() {
   )
 }
 */
+
+/*
 class Container {
   id: string;
   itemList : Item[];
@@ -109,16 +114,16 @@ const App = () => {
   const itemContainers = [newItemContainer, invItemContainer, trashItemContainer]
 
   const addToInventory = (e: DragEndEvent) => {
-    /** if current data undefined then exit, otherwise set newItem to dragged element's item object */
+    /** if current data undefined then exit, otherwise set newItem to dragged element's item object 
     if (!e.active.data.current) return;
     const newItem = e.active.data.current.item;
 
-    /** do nothing if the item is dropped into its parent container */
+    /** do nothing if the item is dropped into its parent container 
     if (e.over?.id === newItem.curParId) return;
 
     for (let i = 0; i < itemContainers.length; i++) {
       if (e.over?.id === itemContainers[i].id) {
-        /** remove item from old container's list of items */
+        /** remove item from old container's list of items 
         for (let j = 0; j < itemContainers.length; j++) {
           if (newItem.curParId === itemContainers[j].id) {
 
@@ -136,7 +141,7 @@ const App = () => {
             break;
           }
         }
-        /** add item to new container's list of items, unless it's trash */
+        /** add item to new container's list of items, unless it's trash 
         if (e.over?.id !== "droppable-trash") {
           itemContainers[i].itemList.push(newItem)
           itemContainers[i].updateFunc(itemContainers[i].itemList)
@@ -146,30 +151,7 @@ const App = () => {
         
         break;
       }
-    }
-/**
-    if (e.over?.id === "droppable-inventory") {
-      const invItemsCopy = [...invItems];
-      invItemsCopy.push(newItem);
-      setInvItems(invItemsCopy);
-
-      const newItemsCopy = [...newItems];
-      const ind = newItemsCopy.indexOf(newItem)
-      if (ind !== -1) {
-        newItemsCopy.splice(ind, 1)
-        setNewItems(newItemsCopy);
-      }
-      
-
-    }
-    else if (e.over?.id === "droppable-newItems") {
-
-    }
-    else if (e.over?.id === "droppable-trash") {
-      
-    }
-    */
-    
+    }   
   }
 
   return (
@@ -185,6 +167,215 @@ const App = () => {
 
   )
 }
+
+export default dynamic(() => Promise.resolve(App), {
+  ssr: false,
+});
+*/
+
+const menu = {
+  width: '35px',
+  height: '5px',
+  backgroundColor: 'black',
+  margin: '6px 0'
+};
+// fake data generator
+const getItems = (count: number, offset = 0) =>
+  Array.from({ length: count }, (v, k) => k).map(k => ({
+      id: `item-${k + offset}`,
+      content: `item ${k + offset}`
+  }));
+
+// a little function to help us with reordering the result
+const reorder = (list: {id: string, content: string}[], startIndex: number, endIndex: number) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};
+
+/**
+ * Moves an item from one list to another list.
+ */
+const move = (source: {id: string, content: string}[], destination: {id: string, content: string}[], droppableSource: DraggableLocation, droppableDestination: DraggableLocation) => {
+  const sourceClone = Array.from(source);
+  const destClone = Array.from(destination);
+  const [removed] = sourceClone.splice(droppableSource.index, 1);
+
+  destClone.splice(droppableDestination.index, 0, removed);
+
+  const result: Map<string, {id: string, content: string}[]> = new Map();
+  result.set(droppableSource.droppableId, sourceClone)
+  result.set(droppableDestination.droppableId, destClone)
+
+  return result;
+};
+
+const grid = 8;
+
+var tailwindClass = "p-6 flex shrink-0 max-w-sm mx-auto rounded-xl shadow-lg"
+
+const getItemStyle = (isDragging: boolean, draggableStyle: DraggableStyle) => ({
+  // some basic styles to make the items look a bit nicer
+  userSelect: 'none',
+  padding: grid * 2,
+  margin: `0 0 ${grid}px 0`,
+
+  // change background colour if dragging
+  background: isDragging ? 'lightgreen' : 'grey',
+
+  // styles we need to apply on draggables
+  ...draggableStyle
+});
+
+const getListStyle = (isDraggingOver: boolean) => ({
+  background: isDraggingOver ? 'lightblue' : 'lightgrey',
+  padding: grid,
+  width: 250
+});
+
+class App extends Component {
+  state = {
+      items: getItems(5),
+      selected: getItems(5, 5)
+  };
+
+  /**
+   * A semi-generic way to handle multiple lists. Matches
+   * the IDs of the droppable container to the names of the
+   * source arrays stored in the state.
+   */
+  id2List = {
+      droppable: 'items',
+      droppable2: 'selected'
+  };
+
+  getList(id: Id) {
+    if (id === 'droppable') return this.state.items;
+    return this.state.selected;
+  }
+
+  onDragEnd = (result: DropResult) => {
+      const { source, destination } = result;
+
+      // dropped outside the list
+      if (!destination) {
+          return;
+      }
+
+      if (source.droppableId === destination.droppableId) {
+          const items = reorder(
+              this.getList(source.droppableId),
+              source.index,
+              destination.index
+          );
+
+          let state = { items };
+
+          if (source.droppableId === 'droppable2') {
+              state = { selected: items };
+          }
+
+          this.setState(state);
+      } else {
+          const result = move(
+              this.getList(source.droppableId),
+              this.getList(destination.droppableId),
+              source,
+              destination
+          );
+
+          this.setState({
+              items: result.get("droppable"),
+              selected: result.get("droppable2"),
+          });
+      }
+  };
+
+  // Normally you would want to split things out into separate components.
+  // But in this example everything is just done in one place for simplicity
+  render() {
+      return (
+          <DragDropContext onDragEnd={this.onDragEnd}>
+              <Droppable droppableId="droppable">
+                  {(provided, snapshot) => (
+                      <div
+                          ref={provided.innerRef}
+                          style={getListStyle(snapshot.isDraggingOver)}>
+                          {this.state.items.length > 0 &&
+                              this.state.items.map((item, index) => (
+                                  <Draggable
+                                      key={item.id}
+                                      draggableId={item.id}
+                                      index={index}>
+                                      {(provided, snapshot) => (
+                                          <div>
+                                              <div
+                                                  ref={provided.innerRef}
+                                                  {...provided.draggableProps}
+                                                  {...provided.dragHandleProps}
+                                                  className="tailwindClass">
+                                                  <div
+                                                      style={{
+                                                          float: 'right',
+                                                          marginTop: '-9px'
+                                                      }}>
+                                                      <div style={menu} />
+                                                      <div style={menu} />
+                                                      <div style={menu} />
+                                                  </div>
+                                                  {item.content}
+                                              </div>
+                                          </div>
+                                      )}
+                                  </Draggable>
+                              ))}
+                          {provided.placeholder}
+                      </div>
+                  )}
+              </Droppable>
+              <Droppable droppableId="droppable2">
+                  {(provided, snapshot) => (
+                      <div
+                          ref={provided.innerRef}
+                          style={getListStyle(snapshot.isDraggingOver)}>
+                          {this.state.selected.map((item, index) => (
+                              <Draggable
+                                  key={item.id}
+                                  draggableId={item.id}
+                                  index={index}>
+                                  {(provided, snapshot) => (
+                                      <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          className="tailwindClass">
+                                          <div
+                                              style={{
+                                                  float: 'right',
+                                                  marginTop: '-9px'
+                                              }}>
+                                              <div style={menu} />
+                                              <div style={menu} />
+                                              <div style={menu} />
+                                          </div>
+                                          {item.content}
+                                      </div>
+                                  )}
+                              </Draggable>
+                          ))}
+                          {provided.placeholder}
+                      </div>
+                  )}
+              </Droppable>
+          </DragDropContext>
+      );
+  }
+}
+
+// Put the things into the DOM!
+/**ReactDOM.render(<App />, document.getElementById('root'));*/
 
 export default dynamic(() => Promise.resolve(App), {
   ssr: false,
