@@ -49,7 +49,10 @@ class Weapon extends Item {
         this.level = newLevel;
         this.damage = this.level;
 
+        /** NAME, SWING SPEED, HIT DAMAGE */
+
         const potentialTypes = [
+            new WeaponType("Shiv", 2.2, 0.3),
             new WeaponType("Dagger", 2, 0.4),
             new WeaponType("Sword", 1, 1),
             new WeaponType("Pike", 0.5, 1.8),
@@ -64,15 +67,22 @@ class Weapon extends Item {
             new WeaponPrefix("Rusty", 1, 0.8),
             new WeaponPrefix("Factory Refurbished", 1, 1),
             new WeaponPrefix("Tuned", 1.1, 1.1),
+            new WeaponPrefix("Honed", 1.0, 1.2),
+            new WeaponPrefix("Tempered", 1.0, 1.2),
             new WeaponPrefix("Scintillating", 1, 1.3),
             new WeaponPrefix("Masterwork", 1, 1.5),
         ]
         const potentialModPrefixes = [
-            new WeaponPrefix("Heavy", 0.8, 1.2),
+            new WeaponPrefix("Dense", 0.8, 1.2),
             new WeaponPrefix("Lightweight", 1.2, 0.8),
             new WeaponPrefix("Greasy", 1.1, 1),
             new WeaponPrefix("Aerodynamic", 1.2, 1),
             new WeaponPrefix("Porous", 1.3, 0.8),
+            new WeaponPrefix("Soggy", 0.8, 0.8),
+            new WeaponPrefix("Spongy", 1.2, 0.5),
+            new WeaponPrefix("Elastic", 1.3, 0.5),
+            new WeaponPrefix("Barbed", 0.9, 1.2),
+            new WeaponPrefix("Serrated", 0.9, 1.1),
         ]
 
         const potentialMaterials = [
@@ -81,8 +91,10 @@ class Weapon extends Item {
             new WeaponMaterial("Copper", 1, 1),
             new WeaponMaterial("Lead", 1, 1),
             new WeaponMaterial("Iron", 1, 1),
-            new WeaponMaterial("Gold", 1, 1),
+            new WeaponMaterial("Steel", 1, 1),
+            new WeaponMaterial("Golden", 1, 1),
             new WeaponMaterial("Meteoric", 1, 1),
+            new WeaponMaterial("Aluminum", 1, 1),
         ]
 
         this.type = this.randItem(potentialTypes);
