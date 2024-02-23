@@ -14,9 +14,9 @@ class Item {
     }
 
     serialIdGenerator() {
-        var kek = ""
-        kek += "name: " + this.name
-        return kek
+        /**var kek = ""
+        kek += "name: " + this.name */
+        return this.guidGenerator()
     }
 
     guidGenerator() {

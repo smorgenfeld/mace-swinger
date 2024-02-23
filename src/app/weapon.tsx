@@ -65,6 +65,7 @@ class Weapon extends Item {
             new WeaponPrefix("Broken", 1, 0.5),
             new WeaponPrefix("Shoddy", 1, 0.7),
             new WeaponPrefix("Rusty", 1, 0.8),
+            new WeaponPrefix("Chipped", 1, 0.8),
             new WeaponPrefix("Factory Refurbished", 1, 1),
             new WeaponPrefix("Tuned", 1.1, 1.1),
             new WeaponPrefix("Honed", 1.0, 1.2),
@@ -83,6 +84,8 @@ class Weapon extends Item {
             new WeaponPrefix("Elastic", 1.3, 0.5),
             new WeaponPrefix("Barbed", 0.9, 1.2),
             new WeaponPrefix("Serrated", 0.9, 1.1),
+            new WeaponPrefix("Sticky", 1.2, 1.1),
+            new WeaponPrefix("Transparent", 0.9, 1),
         ]
 
         const potentialMaterials = [
@@ -95,6 +98,7 @@ class Weapon extends Item {
             new WeaponMaterial("Golden", 1, 1),
             new WeaponMaterial("Meteoric", 1, 1),
             new WeaponMaterial("Aluminum", 1, 1),
+            new WeaponMaterial("Lithium", 1, 1),
         ]
 
         this.type = this.randItem(potentialTypes);

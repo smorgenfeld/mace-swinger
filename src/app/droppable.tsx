@@ -9,6 +9,8 @@ interface IItemContainer {
     items: Item[];
     newId: string;
     title: string;
+    maxSize: number;
+    isCurSource: boolean;
 }
 
 
@@ -26,31 +28,41 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   */
 
   const id = props.newId
-  
-  var itemContainer = "p-4 shrink-0 space-y-4 max-w-sm mx-auto bg-transparent rounded-xl shadow-lg"
-
-  if (props.newId == "trash") {
-    itemContainer = "p-4 shrink-0 space-y-4 max-w-sm mx-auto bg-red-500 rounded-xl shadow-lg"
-  }
 
   /* container style */
-  function getListStyle(isDraggingOver: boolean) {
-    var output = "p-6 block shrink-0 max-w-sm mx-auto rounded-xl shadow-lg w-1/2 "
+  function getListStyle(isDraggingOver: boolean, curChildCount: number) {
+    var output = "pl-6 pr-6 pt-3 pb-3 block shrink-0 rounded-xl shadow-lg w-[100%] min-h-36 "
   
-    var color = ["green-100", "slate-100"]
-    if (props.newId === "trash") color = ["red-500", "red-400"]
+    var color = ["bg-green-100", "bg-slate-100"]
+    if (props.newId === "trash") color = ["bg-red-600", "bg-red-500"]
+    else if (curChildCount >= props.maxSize) color = ["bg-red-200", "bg-red-100"]
   
     if (isDraggingOver) {
-      output += " bg-" + color[0]
+      output += color[0]
     }
     else {
-      output += " bg-" + color[1]
+      output += color[1]
     }
     return output
   };
 
+  function getChildCount(curChildCount: number) {
+    if (props.newId === "trash") return ""
+    return "["+curChildCount.toString()+"/"+props.maxSize.toString()+"]"
+  }
 
-  var titleBlockStyle = "p-2 text-center bg-slate-200 flex shrink-0 max-w-sm mx-auto rounded-xl shadow-lg "
+  function childCountStyle(curChildCount: number) {
+    if (curChildCount >= props.maxSize) return 'text-red-500'
+    else return 'text-green-500'
+  }
+
+  function disableIfTooManyChildren(curChildCount: number) {
+    if (props.isCurSource) return false
+    else return curChildCount >= props.maxSize
+  }
+
+
+  var titleBlockStyle = "p-2 text-center bg-slate-200 flex shrink-0 max-w-m mx-auto rounded-xl shadow-lg"
   if (props.title == "") titleBlockStyle = "hidden"
 
   var phText = "";
@@ -64,10 +76,10 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   }
 
   return (
-    <Droppable droppableId={id}>
+    <Droppable droppableId={id} isDropDisabled={disableIfTooManyChildren(toMap.length)} >
       {(provided, snapshot) => (
-        <div className={getListStyle(snapshot.isDraggingOver)}>
-          <h2>{props.title}</h2>
+        <div className={getListStyle(snapshot.isDraggingOver, toMap.length)}>
+          <h1 className='pb-3'><b>{props.title} </b><b className={childCountStyle(toMap.length)}>{getChildCount(toMap.length)}</b></h1>
           <div {...provided.droppableProps} ref={provided.innerRef}>
             {toMap.map((item, index) => (
               <ItemDraggable key={item.name} item={item} placeholderText={phText} index={index}/>

@@ -16,5 +16,11 @@ const config: Config = {
     },
   },
   plugins: [],
+  safelist: [
+    {
+      pattern: /bg-blue-.+/,
+      variants: ['lg', 'hover', 'focus', 'hidden', 'block'],
+    }
+  ]
 };
 export default config;

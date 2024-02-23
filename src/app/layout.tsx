@@ -21,7 +21,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/resources/icons/icon-512x512.png" />
         <meta name="theme-color" content="#000" />
       </head>
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <div className="flex justify-center items-center w-screen h-screen">
+        {children}</div></body>
     </html>
   );
 }
