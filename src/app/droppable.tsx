@@ -11,6 +11,7 @@ interface IItemContainer {
     title: string;
     maxSize: number;
     isCurSource: boolean;
+    stacked: boolean
 }
 
 
@@ -29,6 +30,8 @@ const ItemContainer: FC<IItemContainer> = (props) => {
 
   const id = props.newId
 
+  const placeholderItem = new Item("", "", true)
+
   /* container style */
   function getListStyle(isDraggingOver: boolean, curChildCount: number) {
     var output = "pl-6 pr-6 pt-3 pb-3 block shrink-0 rounded-xl shadow-lg w-[100%] min-h-36 "
@@ -43,6 +46,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
     else {
       output += color[1]
     }
+
     return output
   };
 
@@ -57,7 +61,8 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   }
 
   function disableIfTooManyChildren(curChildCount: number) {
-    if (props.isCurSource) return false
+    if (props.stacked) return true
+    else if (props.isCurSource) return false
     else return curChildCount >= props.maxSize
   }
 
@@ -66,27 +71,48 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   if (props.title == "") titleBlockStyle = "hidden"
 
   var phText = "";
+  var topCN = "min-h-24"
   var toMap: Item[] = []
+  var stackedItem: Item[] = []
+  var stackedPlaceholder: Item[] = []
   if (props.items === undefined || props.items.length == 0) {
     /*toMap.push(new Item("temp", "temp", true));*/
     props.newId === "trash" ? phText = "TRASH" : phText = "EMPTY";
+  }
+  else if (props.stacked) {
+    topCN = "absolute [width:calc(100%-8.5rem)]" //magic number that does not make sense but ok
+    if (props.items.length > 0) {toMap = props.items.slice(0, Math.min(1, props.items.length));stackedPlaceholder = toMap}
+    else toMap = []
+    if (props.items.length > 1) {
+      stackedItem = [props.items[1]]
+    }
+    else stackedItem=[]
   }
   else {
     toMap = [...props.items]
   }
 
   return (
-    <Droppable droppableId={id} isDropDisabled={disableIfTooManyChildren(toMap.length)} >
+    <Droppable droppableId={id} isDropDisabled={disableIfTooManyChildren(props.items.length)} >
       {(provided, snapshot) => (
-        <div className={getListStyle(snapshot.isDraggingOver, toMap.length)}>
-          <h1 className='pb-3'><b>{props.title} </b><b className={childCountStyle(toMap.length)}>{getChildCount(toMap.length)}</b></h1>
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {toMap.map((item, index) => (
-              <ItemDraggable key={item.name} item={item} placeholderText={phText} index={index}/>
-            ))}
-            {provided.placeholder}
+        <div className={getListStyle(snapshot.isDraggingOver, props.items.length)}>
+          <h1 className='pb-3 relative'><b>{props.title} </b><b className={childCountStyle(props.items.length)}>{getChildCount(props.items.length)}</b></h1>
+            <div {...provided.droppableProps} ref={provided.innerRef} className={topCN}>
+              {toMap.map((item, index) => (
+                <ItemDraggable key={item.serialId} item={item} placeholderText={phText} index={index} isStacked={props.stacked}/>
+              ))}
+              {provided.placeholder}
             </div>
-        </div>
+            {stackedPlaceholder.map((kek, index) => (
+                <div key={kek.serialId} className='p-6 flex w-[100%] mx-auto rounded-xl mb-3 bg-transparent outline-dashed -outline-offset-4'><p className='invisible'>+</p></div>
+            ))}
+            
+            {stackedItem.map((kek, index) => (
+                <div key={kek.serialId} className='p-6 flex w-[100%] mx-auto rounded-xl shadow-lg mb-3 -my-12 bg-slate-200'>{kek.name}</div>
+            ))}
+              
+
+          </div>
     )}
     </Droppable>
   );

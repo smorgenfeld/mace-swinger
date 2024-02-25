@@ -114,9 +114,10 @@ const move = (source: Weapon[], destination: Weapon[], droppableSource: Draggabl
 const windowShown = "z-10 block w-[100%] bg-slate-400 h-full rounded-xl"
 
 class App extends Component {
+
   state = {
-      newItems: getItems(5),
-      invItems: getItems(5, 5),
+      newItems: getItems(25),
+      invItems: getItems(5, 25),
       trashItems: [],
       windowsShown: [false, false],
       curSource: [false, false],
@@ -124,13 +125,14 @@ class App extends Component {
   };
 
   toggleWindows(ind: number) {
-    for (let i = 0; i < this.state.windowsShown.length; i++) {
-      if (i != ind) this.state.windowsShown[i] = false;
+    var kek = this.state.windowsShown
+    for (let i = 0; i < kek.length; i++) {
+      if (i != ind) kek[i] = false;
       else {
-        this.state.windowsShown[i] = !this.state.windowsShown[i]
+        kek[i] = !kek[i]
       }
     }
-    this.setState({windowsShown: this.state.windowsShown})
+    this.setState({windowsShown: kek})
   }
 
   getList(id: Id) {
@@ -148,23 +150,25 @@ class App extends Component {
 
   onDragStart = (start: DragStart) => {
     // if a droppable is a drag source renable if full so we can reorder full droppables
-    for (let i=0; i < this.state.curSource.length; i++) {
-      this.state.curSource[i] = false
+    var kek = this.state.curSource
+    for (let i=0; i < kek.length; i++) {
+      kek[i] = false
     }
-    if (start.source.droppableId === "newItems") this.state.curSource[0] = true
-    else if (start.source.droppableId === "invItems") this.state.curSource[1] = true
+    if (start.source.droppableId === "newItems") kek[0] = true
+    else if (start.source.droppableId === "invItems") kek[1] = true
 
-    this.setState({curSource: this.state.curSource})
+    this.setState({curSource: kek})
   }
 
   onDragEnd = (result: DropResult) => {
       const { source, destination } = result;
 
       // reset curSource list so we redisable any full droppables
-      for (let i=0; i < this.state.curSource.length; i++) {
-        this.state.curSource[i] = false
+      var kek = this.state.curSource
+      for (let i=0; i < kek.length; i++) {
+        kek[i] = false
       }
-      this.setState({curSource: this.state.curSource})
+      this.setState({curSource: kek})
 
       // dropped outside the list
       if (!destination) {
@@ -190,8 +194,9 @@ class App extends Component {
               destination
           );
 
-          this.updateList(source.droppableId, result.get(source.droppableId))
+          
           this.updateList(destination.droppableId, result.get(destination.droppableId))
+          this.updateList(source.droppableId, result.get(source.droppableId))
 
       }
   };
@@ -206,9 +211,9 @@ class App extends Component {
           <div className={this.state.windowsShown[0] ? windowShown : "hidden"}>
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <div className="p-6 space-y-6">
-                <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[0]} />
-                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]}/>
-                <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]}/>
+                <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[0]} stacked={true}/>
+                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false}/>
+                <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]} stacked={false}/>
               </div>
             </DragDropContext>
           </div>
@@ -217,8 +222,8 @@ class App extends Component {
           <div className={this.state.windowsShown[1] ? windowShown : "hidden"}>
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
               <div className="p-6 space-y-6">
-                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} />
-                <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]}/>
+                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false} />
+                <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]} stacked={false}/>
               </div>
             </DragDropContext>
           </div>

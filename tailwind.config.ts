@@ -18,7 +18,7 @@ const config: Config = {
   plugins: [],
   safelist: [
     {
-      pattern: /bg-blue-.+/,
+      pattern: /min-h-.+/, 
       variants: ['lg', 'hover', 'focus', 'hidden', 'block'],
     }
   ]

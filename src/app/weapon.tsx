@@ -75,6 +75,7 @@ class Weapon extends Item {
         ]
         const potentialModPrefixes = [
             new WeaponPrefix("Dense", 0.8, 1.2),
+            new WeaponPrefix("Blunt", 0.8, 1),
             new WeaponPrefix("Lightweight", 1.2, 0.8),
             new WeaponPrefix("Greasy", 1.1, 1),
             new WeaponPrefix("Aerodynamic", 1.2, 1),
@@ -84,6 +85,7 @@ class Weapon extends Item {
             new WeaponPrefix("Elastic", 1.3, 0.5),
             new WeaponPrefix("Barbed", 0.9, 1.2),
             new WeaponPrefix("Serrated", 0.9, 1.1),
+            new WeaponPrefix("Keen", 0.9, 1.1),
             new WeaponPrefix("Sticky", 1.2, 1.1),
             new WeaponPrefix("Transparent", 0.9, 1),
         ]
@@ -99,6 +101,8 @@ class Weapon extends Item {
             new WeaponMaterial("Meteoric", 1, 1),
             new WeaponMaterial("Aluminum", 1, 1),
             new WeaponMaterial("Lithium", 1, 1),
+            new WeaponMaterial("Tungsten", 1, 1),
+            new WeaponMaterial("Crystal", 1, 1),
         ]
 
         this.type = this.randItem(potentialTypes);
