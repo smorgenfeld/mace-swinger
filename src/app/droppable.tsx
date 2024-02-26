@@ -34,11 +34,12 @@ const ItemContainer: FC<IItemContainer> = (props) => {
 
   /* container style */
   function getListStyle(isDraggingOver: boolean, curChildCount: number) {
-    var output = "pl-6 pr-6 pt-3 pb-3 block shrink-0 rounded-xl shadow-lg w-[100%] min-h-36 "
+    var output = "pl-3 pr-3 pt-3 pb-1 block shrink-0 rounded-xl shadow-lg w-[100%] min-h-[9rem] "
   
-    var color = ["bg-green-100", "bg-slate-100"]
+    var color = ["bg-green-100 dark:bg-green-800", "bg-slate-100 dark:bg-slate-600"]
     if (props.newId === "trash") color = ["bg-red-600", "bg-red-500"]
-    else if (curChildCount >= props.maxSize) color = ["bg-red-200", "bg-red-100"]
+    else if (props.newId === 'newItems') color = ["bg-slate-100 dark:bg-slate-600", "bg-slate-100 dark:bg-slate-600"]
+    else if (curChildCount >= props.maxSize) color = ["bg-red-100 dark:bg-red-900", "bg-red-100 dark:bg-red-900"] //bg-red-200 dark:bg-red-900
   
     if (isDraggingOver) {
       output += color[0]
@@ -56,8 +57,8 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   }
 
   function childCountStyle(curChildCount: number) {
-    if (curChildCount >= props.maxSize) return 'text-red-500'
-    else return 'text-green-500'
+    if (curChildCount >= props.maxSize) return 'text-red-500 dark:text-red-200'
+    else return 'text-green-500 dark:text-green-200'
   }
 
   function disableIfTooManyChildren(curChildCount: number) {
@@ -67,11 +68,11 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   }
 
 
-  var titleBlockStyle = "p-2 text-center bg-slate-200 flex shrink-0 max-w-m mx-auto rounded-xl shadow-lg"
+  var titleBlockStyle = "p-3 text-center bg-slate-200 flex shrink-0 max-w-m mx-auto rounded shadow-lg"
   if (props.title == "") titleBlockStyle = "hidden"
 
   var phText = "";
-  var topCN = "min-h-24"
+  var topCN = "min-h-12"
   var toMap: Item[] = []
   var stackedItem: Item[] = []
   var stackedPlaceholder: Item[] = []
@@ -80,7 +81,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
     props.newId === "trash" ? phText = "TRASH" : phText = "EMPTY";
   }
   else if (props.stacked) {
-    topCN = "absolute [width:calc(100%-8.5rem)]" //magic number that does not make sense but ok
+    topCN = "absolute [width:calc(100%-4.5rem)]" //magic number that does not make sense but ok
     if (props.items.length > 0) {toMap = props.items.slice(0, Math.min(1, props.items.length));stackedPlaceholder = toMap}
     else toMap = []
     if (props.items.length > 1) {
@@ -104,11 +105,11 @@ const ItemContainer: FC<IItemContainer> = (props) => {
               {provided.placeholder}
             </div>
             {stackedPlaceholder.map((kek, index) => (
-                <div key={kek.serialId} className='p-6 flex w-[100%] mx-auto rounded-xl mb-3 bg-transparent outline-dashed -outline-offset-4'><p className='invisible'>+</p></div>
+                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded mb-3 outline-dashed -outline-offset-4 bg-slate-200 dark:bg-slate-800'><p className='invisible'>+<br/>+</p></div>
             ))}
             
             {stackedItem.map((kek, index) => (
-                <div key={kek.serialId} className='p-6 flex w-[100%] mx-auto rounded-xl shadow-lg mb-3 -my-12 bg-slate-200'>{kek.name}</div>
+                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded shadow-lg mb-3 -my-9 bg-slate-200 dark:bg-slate-800'>{kek.name}</div>
             ))}
               
 

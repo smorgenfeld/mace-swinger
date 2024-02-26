@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 
 import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable, Id, OnDragEndResponder, DropResult, DraggableLocation, DraggableStyle, DragStart } from '@hello-pangea/dnd';
+import { randomInt } from "crypto";
 
 /*
 
@@ -79,7 +80,7 @@ export default function App() {
 function getItems(count: number, offset = 0) {
   const output = [];
   for (let i = 0; i < count; i++) {
-    output.push(new Weapon(1, ""))
+    output.push(new Weapon(1+Math.floor(Math.random() * (10+1)), ""))
   }
   return output;
 }
@@ -117,11 +118,11 @@ class App extends Component {
 
   state = {
       newItems: getItems(25),
-      invItems: getItems(5, 25),
+      invItems: getItems(3, 25),
       trashItems: [],
       windowsShown: [false, false],
       curSource: [false, false],
-      maxInvSize: 5
+      maxInvSize: 3
   };
 
   toggleWindows(ind: number) {
@@ -203,17 +204,17 @@ class App extends Component {
 
   render() {
       return (
-        <div className="z-0 p-5 w-full h-full flex justify-center">
-          <button className="z-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl fixed bottom-3 right-[10%] h-[10%] w-[25%]" onClick={()=>this.toggleWindows(0)}>Loot</button>
-          <button className="z-20 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl fixed bottom-3 left-[10%] h-[10%] w-[25%]" onClick={()=>this.toggleWindows(1)}>Inventory</button>
+        <div className="z-0 p-3 w-full h-full flex justify-center">
+          <button className="z-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl fixed bottom-6 right-[10%] h-[10%] w-[25%]" onClick={()=>this.toggleWindows(0)}>Loot</button>
+          <button className="z-20 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl fixed bottom-6 left-[10%] h-[10%] w-[25%]" onClick={()=>this.toggleWindows(1)}>Inventory</button>
 
           {/** Loot, ind 0 */}
           <div className={this.state.windowsShown[0] ? windowShown : "hidden"}>
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <div className="p-6 space-y-6">
+              <div className="p-3 space-y-3">
                 <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[0]} stacked={true}/>
-                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false}/>
                 <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]} stacked={false}/>
+                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false}/>
               </div>
             </DragDropContext>
           </div>
@@ -221,7 +222,7 @@ class App extends Component {
           {/** Inventory, ind 1 */}
           <div className={this.state.windowsShown[1] ? windowShown : "hidden"}>
             <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <div className="p-6 space-y-6">
+              <div className="p-3 space-y-3">
                 <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false} />
                 <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]} stacked={false}/>
               </div>

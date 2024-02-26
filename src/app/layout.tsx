@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="manifest" href="/mace-swinger/manifest.json" />
         <link rel="apple-touch-icon" href="/resources/icons/icon-512x512.png" />

@@ -2,6 +2,7 @@ import React from 'react';
 import {FC} from "react";
 import Item from './item';
 import { Draggable } from '@hello-pangea/dnd'
+import Weapon from './weapon'
 
 interface IItemDraggable {
     item: Item;
@@ -33,14 +34,13 @@ const ItemDraggable: FC<IItemDraggable> = (props) => {
     };
     */
 
-    var tailwindClass = "p-6 flex mx-auto rounded-xl shadow-lg mb-3 "
+    var tailwindClass = "p-3 flex mx-auto rounded shadow-lg mb-3 bg-white dark:bg-slate-700 "
     var cssToDisableTransition = ""
     if (props.placeholderText === "TRASH") tailwindClass += " bg-red-400";
     else if (props.placeholderText !== "") tailwindClass += " bg-slate-200";
     else if (props.isStacked) {
-        tailwindClass += " bg-white w-[100%]"
+        tailwindClass += " w-[100%]"
     }
-    else tailwindClass += " bg-white";
     // stacked cards??
     //if (props.isStacked && props.index !== 0) tailwindClass += " -my-8"
     tailwindClass += " z-10 relative"
@@ -55,14 +55,12 @@ const ItemDraggable: FC<IItemDraggable> = (props) => {
     return (
         <Draggable draggableId={props.item.serialId} index={props.index} isDragDisabled={false}>
             {(provided) => (
-                <div
-                className={tailwindClass}
-                ref={provided.innerRef}
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                >
-                {title}
-                </div>
+                <div className={tailwindClass} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                <p>{title}
+                <br/>
+                <i>{(props.item as Weapon).getCardInfo()}</i>
+                </p></div>
+                
             )}
         </Draggable>
     );
