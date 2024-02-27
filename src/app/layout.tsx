@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Mace Swinger",
-  description: "Description",
+  description: "Clever Description",
 };
 
 export default function RootLayout({
@@ -22,8 +22,12 @@ export default function RootLayout({
         <meta name="theme-color" content="#000" />
       </head>
       <body className={inter.className}>
-        <div className="flex justify-center items-center w-screen h-screen">
-        {children}</div></body>
+        <div className="flex justify-center items-center w-screen h-screen bg-transparent">
+          {children}
+          
+        </div>
+        
+        </body>
     </html>
   );
 }

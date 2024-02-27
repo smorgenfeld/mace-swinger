@@ -112,7 +112,7 @@ const move = (source: Weapon[], destination: Weapon[], droppableSource: Draggabl
   return result;
 };
 
-const windowShown = "z-10 block w-[100%] bg-slate-400 h-full rounded-xl"
+const windowShown = "z-10 block w-[100%] h-screen backdrop-blur	"
 
 class App extends Component {
 
@@ -120,9 +120,9 @@ class App extends Component {
       newItems: getItems(25),
       invItems: getItems(3, 25),
       trashItems: [],
-      windowsShown: [false, false],
-      curSource: [false, false],
-      maxInvSize: 3
+      windowsShown: [false, false, false],
+      curSource: [false, false, false],
+      maxInvSize: 3,
   };
 
   toggleWindows(ind: number) {
@@ -131,6 +131,7 @@ class App extends Component {
       if (i != ind) kek[i] = false;
       else {
         kek[i] = !kek[i]
+        kek[0] = kek[i]
       }
     }
     this.setState({windowsShown: kek})
@@ -155,8 +156,8 @@ class App extends Component {
     for (let i=0; i < kek.length; i++) {
       kek[i] = false
     }
-    if (start.source.droppableId === "newItems") kek[0] = true
-    else if (start.source.droppableId === "invItems") kek[1] = true
+    if (start.source.droppableId === "newItems") {kek[1] = true; kek[0] = true} //first index holds whether any window is open and bg should be blurred
+    else if (start.source.droppableId === "invItems") {kek[2] = true; kek[0] = true}
 
     this.setState({curSource: kek})
   }
@@ -204,31 +205,42 @@ class App extends Component {
 
   render() {
       return (
-        <div className="z-0 p-3 w-full h-full flex justify-center">
-          <button className="z-20 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl fixed bottom-6 right-[10%] h-[10%] w-[25%]" onClick={()=>this.toggleWindows(0)}>Loot</button>
-          <button className="z-20 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl fixed bottom-6 left-[10%] h-[10%] w-[25%]" onClick={()=>this.toggleWindows(1)}>Inventory</button>
+        <div className={this.state.windowsShown[0] ? "z-0 w-full flex justify-center overflow-hidden":"z-0 w-full flex justify-center"}>
+          <div className="fixed top-0 w-full">
+            <button className="z-20 bg-blue-500 hover:bg-blue-700 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 right-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(1)}>Loot</button>
+            <button className="z-20 bg-green-500 hover:bg-green-700 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 left-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(2)}>Inventory</button>
 
-          {/** Loot, ind 0 */}
-          <div className={this.state.windowsShown[0] ? windowShown : "hidden"}>
-            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <div className="p-3 space-y-3">
-                <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[0]} stacked={true}/>
-                <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]} stacked={false}/>
-                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false}/>
-              </div>
-            </DragDropContext>
+            {/** Loot, ind 0 */}
+            <div className={this.state.windowsShown[1] ? windowShown : "hidden"}>
+              <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+                <div className="p-3 space-y-3">
+                  <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={true}/>
+                  <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
+                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[2]} stacked={false}/>
+                </div>
+              </DragDropContext>
+           </div>
+
+            {/** Inventory, ind 1 */}
+            <div className={this.state.windowsShown[2] ? windowShown : "hidden"}>
+              <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
+                <div className="p-3 space-y-3">
+                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[2]} stacked={false} />
+                  <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
+                </div>
+              </DragDropContext>
+            </div>
+          </div>
+          
+          <div className={this.state.windowsShown[0] ? "-z-10 relative w-screen h-screen" : "-z-10 relative w-screen h-screen"}>
+            <div className={this.state.windowsShown[0] ? "fixed -z-10 overflow-y-clip w-screen h-auto" : "relative w-screen -z-10 h-auto"}>
+              <div className="-z-10 bg-sky-500 h-96"></div>
+              <div className="-z-10 bg-yellow-900 h-96"></div>
+              <div className="-z-10 bg-slate-800 h-96"></div>
+            </div>
           </div>
 
-          {/** Inventory, ind 1 */}
-          <div className={this.state.windowsShown[1] ? windowShown : "hidden"}>
-            <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-              <div className="p-3 space-y-3">
-                <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={false} />
-                <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[0]} stacked={false}/>
-              </div>
-            </DragDropContext>
-          </div>
-          </div>
+        </div>
       );
   }
 }

@@ -108,7 +108,7 @@ class Weapon extends Item {
             new WeaponPrefix("Sticky",      1.2, 1.1, 1.0, 1.0, 0.0, 0.0),
             new WeaponPrefix("Irradiated ", 1.0, 1.0, 1.0, 1.0, 0.5, 0.0),
             new WeaponPrefix("Glowing ",    1.0, 1.0, 1.0, 1.0, 0.2, 0.0),
-            new WeaponPrefix("Proximitry Fused ", 1.0, 1.0, 1.0, 1.0, 0.0, 0.5), 
+            new WeaponPrefix("Proximity Fused ", 1.0, 1.0, 1.0, 1.0, 0.0, 0.5), 
         ]
 
         /** NAME, DENSITY (~0.5-2), HARDNESS (~0.5-2), MAGIC (0-2), EXPLOSIVE (0-2) */

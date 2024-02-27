@@ -34,7 +34,7 @@ const ItemDraggable: FC<IItemDraggable> = (props) => {
     };
     */
 
-    var tailwindClass = "p-3 flex mx-auto rounded shadow-lg mb-3 bg-white dark:bg-slate-700 "
+    var tailwindClass = "p-3 flex mx-auto rounded shadow-lg mb-3 bg-white dark:bg-slate-700 text-slate-950 dark:text-slate-50"
     var cssToDisableTransition = ""
     if (props.placeholderText === "TRASH") tailwindClass += " bg-red-400";
     else if (props.placeholderText !== "") tailwindClass += " bg-slate-200";

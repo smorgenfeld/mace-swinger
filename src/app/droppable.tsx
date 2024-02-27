@@ -63,7 +63,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
 
   function disableIfTooManyChildren(curChildCount: number) {
     if (props.stacked) return true
-    else if (props.isCurSource) return false
+    else if (props.isCurSource) {return false}
     else return curChildCount >= props.maxSize
   }
 
@@ -81,7 +81,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
     props.newId === "trash" ? phText = "TRASH" : phText = "EMPTY";
   }
   else if (props.stacked) {
-    topCN = "absolute [width:calc(100%-4.5rem)]" //magic number that does not make sense but ok
+    topCN = "absolute [width:calc(100%-3rem)]" //magic number that does not make sense but ok
     if (props.items.length > 0) {toMap = props.items.slice(0, Math.min(1, props.items.length));stackedPlaceholder = toMap}
     else toMap = []
     if (props.items.length > 1) {
@@ -97,7 +97,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
     <Droppable droppableId={id} isDropDisabled={disableIfTooManyChildren(props.items.length)} >
       {(provided, snapshot) => (
         <div className={getListStyle(snapshot.isDraggingOver, props.items.length)}>
-          <h1 className='pb-3 relative'><b>{props.title} </b><b className={childCountStyle(props.items.length)}>{getChildCount(props.items.length)}</b></h1>
+          <h1 className='pb-3 relative text-slate-950 dark:text-slate-50'><b>{props.title} </b><b className={childCountStyle(props.items.length)}>{getChildCount(props.items.length)}</b></h1>
             <div {...provided.droppableProps} ref={provided.innerRef} className={topCN}>
               {toMap.map((item, index) => (
                 <ItemDraggable key={item.serialId} item={item} placeholderText={phText} index={index} isStacked={props.stacked}/>
@@ -105,11 +105,11 @@ const ItemContainer: FC<IItemContainer> = (props) => {
               {provided.placeholder}
             </div>
             {stackedPlaceholder.map((kek, index) => (
-                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded mb-3 outline-dashed -outline-offset-4 bg-slate-200 dark:bg-slate-800'><p className='invisible'>+<br/>+</p></div>
+                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded mb-3 outline-dashed -outline-offset-4 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-slate-50'><p className='invisible'>+<br/>+</p></div>
             ))}
             
             {stackedItem.map((kek, index) => (
-                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded shadow-lg mb-3 -my-9 bg-slate-200 dark:bg-slate-800'>{kek.name}</div>
+                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded shadow-lg mb-3 -my-9 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-slate-50'>{kek.name}</div>
             ))}
               
 
