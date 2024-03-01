@@ -34,7 +34,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
 
   /* container style */
   function getListStyle(isDraggingOver: boolean, curChildCount: number) {
-    var output = "pl-3 pr-3 pt-3 pb-1 block shrink-0 rounded-xl shadow-lg w-[100%] min-h-[9rem] "
+    var output = "pl-2 pr-2 pt-3 pb-1 block shrink-0 rounded-xl shadow-lg w-[100%] min-h-[10rem] "
   
     var color = ["bg-green-100 dark:bg-green-800", "bg-slate-100 dark:bg-slate-600"]
     if (props.newId === "trash") color = ["bg-red-600", "bg-red-500"]
@@ -68,7 +68,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   }
 
 
-  var titleBlockStyle = "p-3 text-center bg-slate-200 flex shrink-0 max-w-m mx-auto rounded shadow-lg"
+  var titleBlockStyle = "py-3 text-center bg-slate-200 flex shrink-0 max-w-m mx-auto rounded shadow-lg"
   if (props.title == "") titleBlockStyle = "hidden"
 
   var phText = "";
@@ -81,7 +81,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
     props.newId === "trash" ? phText = "TRASH" : phText = "EMPTY";
   }
   else if (props.stacked) {
-    topCN = "absolute [width:calc(100%-3rem)]" //magic number that does not make sense but ok
+    topCN = "absolute [width:calc(100%-1rem)]" //magic number that does not make sense but ok
     if (props.items.length > 0) {toMap = props.items.slice(0, Math.min(1, props.items.length));stackedPlaceholder = toMap}
     else toMap = []
     if (props.items.length > 1) {
@@ -97,7 +97,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
     <Droppable droppableId={id} isDropDisabled={disableIfTooManyChildren(props.items.length)} >
       {(provided, snapshot) => (
         <div className={getListStyle(snapshot.isDraggingOver, props.items.length)}>
-          <h1 className='pb-3 relative text-slate-950 dark:text-slate-50'><b>{props.title} </b><b className={childCountStyle(props.items.length)}>{getChildCount(props.items.length)}</b></h1>
+          <h1 className='pb-1 relative text-slate-950 dark:text-slate-50'>&ensp;<b>{props.title} </b><b className={childCountStyle(props.items.length)}>{getChildCount(props.items.length)}</b></h1>
             <div {...provided.droppableProps} ref={provided.innerRef} className={topCN}>
               {toMap.map((item, index) => (
                 <ItemDraggable key={item.serialId} item={item} placeholderText={phText} index={index} isStacked={props.stacked}/>
@@ -105,11 +105,11 @@ const ItemContainer: FC<IItemContainer> = (props) => {
               {provided.placeholder}
             </div>
             {stackedPlaceholder.map((kek, index) => (
-                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded mb-3 outline-dashed -outline-offset-4 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-slate-50'><p className='invisible'>+<br/>+</p></div>
+                <div key={kek.serialId} className='py-3 flex w-[100%] mx-auto rounded mb-3 outline-dashed -outline-offset-4 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-slate-50'><p className='invisible'>+<br/>+</p></div>
             ))}
             
             {stackedItem.map((kek, index) => (
-                <div key={kek.serialId} className='p-3 flex w-[100%] mx-auto rounded shadow-lg mb-3 -my-9 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-slate-50'>{kek.name}</div>
+                <div key={kek.serialId} className='text-sm pl-2 pr-2 py-3 flex w-[100%] mx-auto rounded shadow-lg mb-3 -my-3 bg-slate-200 dark:bg-slate-800 text-slate-950 dark:text-slate-50'>{kek.name}</div>
             ))}
               
 

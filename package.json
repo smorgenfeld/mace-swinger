@@ -11,6 +11,8 @@
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
     "@hello-pangea/dnd": "^16.5.0",
+    "bootstrap-icons": "^1.11.3",
+    "html-react-parser": "^5.1.8",
     "keen-slider": "^6.8.6",
     "next": "14.1.0",
     "next-pwa": "^5.6.0",

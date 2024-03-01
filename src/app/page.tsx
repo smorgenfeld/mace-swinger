@@ -12,7 +12,9 @@ import dynamic from "next/dynamic";
 
 import React, { Component } from 'react';
 import { DragDropContext, Droppable, Draggable, Id, OnDragEndResponder, DropResult, DraggableLocation, DraggableStyle, DragStart } from '@hello-pangea/dnd';
-import { randomInt } from "crypto";
+import Dungeon from './dungeon';
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import DungeonContainer from "./dungeonContainer";
 
 /*
 
@@ -122,8 +124,11 @@ class App extends Component {
       trashItems: [],
       windowsShown: [false, false, false],
       curSource: [false, false, false],
-      maxInvSize: 3,
+      maxInvSize: [3, 10], // inven, loot pool
+      delving: false,
+      curDungeon: new Dungeon(3)
   };
+  
 
   toggleWindows(ind: number) {
     var kek = this.state.windowsShown
@@ -134,7 +139,31 @@ class App extends Component {
         kek[0] = kek[i]
       }
     }
+
+    // lock scrolling when modal is open
+    // thank jesus for this random article https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/
+    if (kek[ind]) {
+      const scrollY = window.scrollY
+      console.log(scrollY)
+      const body = document.body;
+      body.style.position = 'fixed';
+      body.style.top = `-${scrollY}px`;
+    }
+    else {
+      const body = document.body;
+      const scrollY = body.style.top;
+      body.style.position = '';
+      body.style.top = '';
+      window.scrollTo(0, parseInt(scrollY || '0') * -1);
+    }
+
     this.setState({windowsShown: kek})
+  }
+
+  toggleDelve() {
+    var d = !this.state.delving
+    this.setState({delving: d})
+    if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(Math.max(...this.state.invItems[0].damage))
   }
 
   getList(id: Id) {
@@ -148,6 +177,7 @@ class App extends Component {
       if (id === "newItems") this.setState({newItems: input})
       else if (id === "invItems") this.setState({invItems: input})
     }
+  
   }
 
   onDragStart = (start: DragStart) => {
@@ -205,18 +235,22 @@ class App extends Component {
 
   render() {
       return (
-        <div className={this.state.windowsShown[0] ? "z-0 w-full flex justify-center overflow-hidden":"z-0 w-full flex justify-center"}>
+        <div className={this.state.windowsShown[0] ? "z-0 w-full flex justify-center"  :"z-0 w-full flex justify-center"}>
           <div className="fixed top-0 w-full">
-            <button className="z-20 bg-blue-500 hover:bg-blue-700 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 right-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(1)}>Loot</button>
-            <button className="z-20 bg-green-500 hover:bg-green-700 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 left-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(2)}>Inventory</button>
+            {/** quick inv bar idk not a huge fan tbh*/}
+            <div className="z-0 bg-slate-800 dark:text-slate-50 py-2 px-4 fixed top-0 p-1 w-screen"><b>Loot:</b> {this.state.newItems.length}  <b>Wood:</b> 0  <b>Stone:</b> 0 <b>Yeet</b> 0</div>
+
+            {/** navigation buttons */ }
+            <button className="z-20 bg-blue-500 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 right-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(1)}>Loot</button>
+            <button className="z-20 bg-green-500 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 left-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(2)}>Inventory</button>
 
             {/** Loot, ind 0 */}
             <div className={this.state.windowsShown[1] ? windowShown : "hidden"}>
               <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-                <div className="p-3 space-y-3">
-                  <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[1]} stacked={true}/>
+                <div className="p-0 space-y-3">
+                  <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize[1]} isCurSource={this.state.curSource[1]} stacked={true}/>
                   <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
-                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[2]} stacked={false}/>
+                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize[0]} isCurSource={this.state.curSource[2]} stacked={false}/>
                 </div>
               </DragDropContext>
            </div>
@@ -224,19 +258,21 @@ class App extends Component {
             {/** Inventory, ind 1 */}
             <div className={this.state.windowsShown[2] ? windowShown : "hidden"}>
               <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
-                <div className="p-3 space-y-3">
-                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize} isCurSource={this.state.curSource[2]} stacked={false} />
+                <div className="p-0 space-y-3">
+                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize[0]} isCurSource={this.state.curSource[2]} stacked={false} />
                   <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
                 </div>
               </DragDropContext>
             </div>
           </div>
           
-          <div className={this.state.windowsShown[0] ? "-z-10 relative w-screen h-screen" : "-z-10 relative w-screen h-screen"}>
-            <div className={this.state.windowsShown[0] ? "fixed -z-10 overflow-y-clip w-screen h-auto" : "relative w-screen -z-10 h-auto"}>
-              <div className="-z-10 bg-sky-500 h-96"></div>
-              <div className="-z-10 bg-yellow-900 h-96"></div>
-              <div className="-z-10 bg-slate-800 h-96"></div>
+          {/** background */}
+          <div className="-z-10 relative w-screen h-screen">
+            <div className="relative w-screen -z-10 h-auto">
+              <div className="relative -z-10 bg-sky-500 h-96 justify-center">
+                <button className="z-10 bg-blue-500 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl absolute h-20 w-40 bottom-0 mx-auto -translate-x-1/2 left-1/2" onClick={()=>this.toggleDelve()}>{this.state.delving ? "Delving..." : "Delve?"}</button>
+              </div>
+              <DungeonContainer parentDungeon={this.state.curDungeon}></DungeonContainer>
             </div>
           </div>
 

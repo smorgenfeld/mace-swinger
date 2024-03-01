@@ -3,6 +3,7 @@ import {FC} from "react";
 import Item from './item';
 import { Draggable } from '@hello-pangea/dnd'
 import Weapon from './weapon'
+import parse from 'html-react-parser';
 
 interface IItemDraggable {
     item: Item;
@@ -34,7 +35,7 @@ const ItemDraggable: FC<IItemDraggable> = (props) => {
     };
     */
 
-    var tailwindClass = "p-3 flex mx-auto rounded shadow-lg mb-3 bg-white dark:bg-slate-700 text-slate-950 dark:text-slate-50"
+    var tailwindClass = "p-2 flex mx-auto rounded shadow-lg mb-3 bg-white dark:bg-slate-700 text-slate-950 dark:text-slate-50"
     var cssToDisableTransition = ""
     if (props.placeholderText === "TRASH") tailwindClass += " bg-red-400";
     else if (props.placeholderText !== "") tailwindClass += " bg-slate-200";
@@ -56,9 +57,9 @@ const ItemDraggable: FC<IItemDraggable> = (props) => {
         <Draggable draggableId={props.item.serialId} index={props.index} isDragDisabled={false}>
             {(provided) => (
                 <div className={tailwindClass} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                <p>{title}
+                <p><span className='text-sm'>{title}</span>
                 <br/>
-                <i>{(props.item as Weapon).getCardInfo()}</i>
+                {parse((props.item as Weapon).getCardInfo())}
                 </p></div>
                 
             )}

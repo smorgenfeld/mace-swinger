@@ -1,4 +1,5 @@
 import Item from "./item"
+import 'bootstrap-icons/font/bootstrap-icons.css'
 
 class WeaponType {
     name: string;
@@ -57,9 +58,13 @@ class Weapon extends Item {
     prefix: WeaponPrefix[];
     material: WeaponMaterial;
     damage: number[];
-    damageLabels: string[]
     name: string;
     swingSpeed: number;
+
+
+    static damageLabels: string[] = ["Shp", "Blt", "Mgc", "Exp", "Bld"]//["Sharp", "Blunt", "Magic", "Explosive", "Bleed???"]
+    static damageIcons: string[] = ["triangle", "square", "filter", "arrows-fullscreen", "droplet-fill"]
+    static damageColors: string[] = ["dark:bg-slate-800 dark:text-slate-300", "dark:bg-slate-600 dark:text-slate-300", "dark:bg-blue-900 dark:text-blue-300", "dark:bg-yellow-900 dark:text-yellow-300", "dark:bg-red-900 dark:text-red-300"]
 
 
     constructor(newLevel: number, parId: string) {
@@ -151,7 +156,6 @@ class Weapon extends Item {
         this.name += this.type.name + " ";
 
         this.damage = [0,0,0,0] // sharp, blunt, magic/radiation, explosive
-        this.damageLabels = ["Sharp", "Blunt", "Magic", "Explosive"]
 
         // handle swing speed
         this.swingSpeed = this.type.baseSwingSpeed * this.blendMod(1/this.material.baseDensity, 0.5, 1)
@@ -207,12 +211,49 @@ class Weapon extends Item {
     getCardInfo() { //toCompare: Weapon | undefined
         var output = ""
         var totDam = 0
+        const width = "w-[5rem]"
+
+        var preoutput = ""
+        var tempString1=""
+        var tempString2=""
+
+        // handle damage type breakdown
         for (let i = 0; i < this.damage.length; i++) {
-            if (this.damage[i] > 0) output += this.damageLabels[i] + ": " + this.damage[i].toFixed(1) + " "
+            if (this.damage[i] > 0) {
+                /** right aligned symbol
+                preoutput += '<span className="text-sm font-medium me-2 px-2.5 py-0.5 rounded inline-block text-right align-middle ' + Weapon.damageColors[i] + " " + width + '">'
+                preoutput += '<span className="float-left"><i class="bi bi-' + Weapon.damageIcons[i] + '"></i></span> ' + this.formatString(this.damage[i]*this.swingSpeed) + "/s<br/>" + this.formatString(this.damage[i]) + "/h</span>"
+                */
+                preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle ' + Weapon.damageColors[i] + " " + width + '">'
+                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + this.formatString(this.damage[i]) + " d/h<br/>" + this.formatString(this.damage[i]*this.swingSpeed) + " d/s</span>"
+            }
             totDam += this.damage[i]
         }
-        output += "Hit/s: " + this.swingSpeed.toFixed(1) + " DPS: " + (totDam * this.swingSpeed).toFixed(1)
-        return output
+
+        //constant tags
+        //dps
+
+        /** broken two box option 
+
+        output += '<span className="inline-block space-y-2">'
+        output += '<span className="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-slate-500 dark:text-slate-300 block text-right align-middle ' + width + '">'
+        output += '<span className="float-left"><i class="bi bi-' + "boxes" + '"></i></span> ' + (totDam*this.swingSpeed).toFixed(1) + "/s<br/>" + totDam.toFixed(1) + "/h</span>"
+
+        output += '<span className="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-slate-500 dark:text-slate-300 block text-right align-middle ' + width + '">'
+        output += '<span className="d-flex justify-content-end"><i class="bi bi-stopwatch align-top"></i></span> ' + this.swingSpeed.toFixed(1) + "h/s</span></span>"
+        */
+
+
+        /** one box option*/
+        output += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle dark:bg-slate-500 dark:text-slate-300 ' + width + '">'
+        output += this.formatString(this.swingSpeed) + " h/s<br/>" + this.formatString(totDam) + " d/h<br/>" + this.formatString(totDam*this.swingSpeed) + " d/s</span>"
+        //output += '<span className="float-left"><i class="bi bi-boxes"></i></span> ' + this.formatString(totDam*this.swingSpeed) + "/s<br/>" + this.formatString(totDam) + "/h<br/>" + this.formatString(1) + "h/s</span>"
+
+
+        // break between constant and inconsistent tags
+        //output += "<span classname='dark:text-slate-100'>|</span> "
+
+        return output + preoutput + ""
     }
 
     randItem(input: any) {
@@ -222,6 +263,17 @@ class Weapon extends Item {
     randInt(max: number) {
         /** max is  inclusive*/
         return Math.floor(Math.random() * (max+1))
+    }
+
+    formatString(input: number) {
+        if (input > 100000000) return (input/1000000).toFixed(0) + "m"
+        else if (input > 10000000) return (input/1000000).toFixed(1) + "m"
+        else if (input > 1000000) return (input/1000000).toFixed(2) + "m"
+        else if (input > 100000) return (input/1000).toFixed(0) + "k"
+        else if (input > 10000) return (input/1000).toFixed(1) + "k"
+        else if (input > 1000) return (input/1000).toFixed(2) + "k"
+        else if (input > 100) return input.toFixed(0)
+        else return input.toFixed(1)
     }
     
 

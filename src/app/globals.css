@@ -51,3 +51,8 @@ body {
 .container.next {
   transform: translateX(-100%);
 }
+
+.bi { 
+  vertical-align: 0.125em;
+  text-indent: 0em;
+ }
