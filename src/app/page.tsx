@@ -115,6 +115,8 @@ const move = (source: Weapon[], destination: Weapon[], droppableSource: Draggabl
 };
 
 const windowShown = "z-10 block w-[100%] h-screen backdrop-blur	"
+var timer: NodeJS.Timeout
+
 
 class App extends Component {
 
@@ -128,34 +130,59 @@ class App extends Component {
       delving: false,
       curDungeon: new Dungeon(3)
   };
+
   
 
   toggleWindows(ind: number) {
     var kek = this.state.windowsShown
-    for (let i = 0; i < kek.length; i++) {
-      if (i != ind) kek[i] = false;
-      else {
-        kek[i] = !kek[i]
-        kek[0] = kek[i]
+    var curopen = -1
+    if (kek[0]) { //if window currently open close it. if we don't do this page scrolls to top when switching between windows for some reason
+      for (let i = 1; i < kek.length; i++) {
+        if (kek[i]) {this.disableWindow(i); curopen = i; break}
       }
+      kek = this.state.windowsShown
     }
 
-    // lock scrolling when modal is open
-    // thank jesus for this random article https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/
-    if (kek[ind]) {
-      const scrollY = window.scrollY
-      console.log(scrollY)
-      const body = document.body;
-      body.style.position = 'fixed';
-      body.style.top = `-${scrollY}px`;
+    if (curopen != ind) {
+      for (let i = 0; i < kek.length; i++) {
+        if (i != ind) kek[i] = false;
+        else {
+          kek[i] = !kek[i]
+          kek[0] = kek[i]
+        }
+      }
+
+      // lock scrolling when modal is open
+      // thank jesus for this random article https://css-tricks.com/prevent-page-scrolling-when-a-modal-is-open/
+      if (kek[ind]) {
+        const scrollY = window.scrollY
+        const body = document.body;
+        body.style.position = 'fixed';
+        body.style.top = `-${scrollY}px`;
+      }
+      else {
+        console.log("fasdasdf")
+        const body = document.body;
+        const scrollY = body.style.top;
+        body.style.position = '';
+        body.style.top = '';
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+
+      this.setState({windowsShown: kek})
     }
-    else {
-      const body = document.body;
-      const scrollY = body.style.top;
-      body.style.position = '';
-      body.style.top = '';
-      window.scrollTo(0, parseInt(scrollY || '0') * -1);
-    }
+  }
+
+  disableWindow(ind: number) {
+    var kek = this.state.windowsShown
+    kek[0] = false
+    kek[ind] = false
+
+    const body = document.body;
+    const scrollY = body.style.top;
+    body.style.position = '';
+    body.style.top = '';
+    window.scrollTo(0, parseInt(scrollY || '0') * -1);
 
     this.setState({windowsShown: kek})
   }
@@ -163,7 +190,24 @@ class App extends Component {
   toggleDelve() {
     var d = !this.state.delving
     this.setState({delving: d})
-    if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(Math.max(...this.state.invItems[0].damage))
+    if (d) {
+      timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
+    }
+    else {
+      clearInterval(timer)
+    }
+  }
+
+
+  swing() {
+    if (this.state.delving) {
+      // deal damage
+      if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(Math.max(...this.state.invItems[0].damage))
+      // update page state
+      this.setState({curDungeon: this.state.curDungeon})
+      // call function again if still delving
+      if (this.state.delving) timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
+    }
   }
 
   getList(id: Id) {

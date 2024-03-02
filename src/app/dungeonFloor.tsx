@@ -1,22 +1,33 @@
 import Dungeon from "./dungeon"
+import Enemy from "./enemy"
 
 class DungeonFloor {
     level: number
-    maxhp: number
-    curhp: number
+    points: number
     parentDungeon: Dungeon
+    enemy: Enemy
+    enemyNum: number
+    maxEnemyNum: number
     
 
-    constructor(level: number, maxhp: number, parentDungeon: Dungeon) {
+    constructor(level: number, points: number, parentDungeon: Dungeon) {
         this.level = level
-        this.maxhp = maxhp
-        this.curhp = maxhp
+        this.points = points
         this.parentDungeon = parentDungeon
+
+        this.enemy = new Enemy(this)
+
+        this.enemyNum = Math.max(1, Math.round(this.points/this.enemy.maxhp))
+        this.maxEnemyNum = this.enemyNum
     }
 
     dealDamage(toDeal: number) {
-        this.curhp = Math.max(0,this.curhp-toDeal)
-        if (this.curhp == 0) return true
+        this.enemy.curhp = Math.max(0,this.enemy.curhp-toDeal)
+        if (this.enemy.curhp == 0) {
+            this.enemyNum -= 1
+            if (this.enemyNum == 0) return true
+            this.enemy.curhp = this.enemy.maxhp
+        }
         return false
     }
 

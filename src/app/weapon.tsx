@@ -138,14 +138,14 @@ class Weapon extends Item {
             new WeaponMaterial("Boron",     1.2, 1.9, 0.0, 0.0),
         ]
 
-        this.type = this.randItem(potentialTypes);
-        if (this.randInt(9) <= 3) this.prefix = [this.randItem(potentialQualityPrefixes)];
-        else if (this.randInt(9) <= 8) this.prefix = [this.randItem(potentialModPrefixes)];
+        this.type = Weapon.randItem(potentialTypes);
+        if (Weapon.randInt(9) <= 3) this.prefix = [Weapon.randItem(potentialQualityPrefixes)];
+        else if (Weapon.randInt(9) <= 8) this.prefix = [Weapon.randItem(potentialModPrefixes)];
         else {
-            this.prefix = [this.randItem(potentialQualityPrefixes), this.randItem(potentialModPrefixes)]
+            this.prefix = [Weapon.randItem(potentialQualityPrefixes), Weapon.randItem(potentialModPrefixes)]
         }
         
-        this.material = this.randItem(potentialMaterials);
+        this.material = Weapon.randItem(potentialMaterials);
 
         this.name = "Lv. " + this.level + " "
         for (let i = 0; i < this.prefix.length; i++) {
@@ -157,25 +157,27 @@ class Weapon extends Item {
 
         this.damage = [0,0,0,0] // sharp, blunt, magic/radiation, explosive
 
+        const chaos = 2
+
         // handle swing speed
-        this.swingSpeed = this.type.baseSwingSpeed * this.blendMod(1/this.material.baseDensity, 0.5, 1)
+        this.swingSpeed = this.type.baseSwingSpeed * this.blendMod(1/this.material.baseDensity, 0.5 * chaos, 1)
         for (let i = 0; i < this.prefix.length; i++) {
-            this.swingSpeed *= this.blendMod(1/this.prefix[0].baseDensityMod, 0.25, 1) * this.blendMod(1/this.prefix[0].baseSwingSpeedMod, 0.5, 1)
+            this.swingSpeed *= this.blendMod(1/this.prefix[0].baseDensityMod, 0.25 * chaos, 1) * this.blendMod(1/this.prefix[0].baseSwingSpeedMod, 0.5 * chaos, 1)
         }
 
         // handle damage
         if (this.type.baseDamageType == 0) {
             //sharp
-            this.damage[0] = this.type.baseDamage * this.blendMod(this.material.baseHardness, 0.5, 1) * this.blendMod(this.material.baseDensity, 0.1, 1)
+            this.damage[0] = this.type.baseDamage * this.blendMod(this.material.baseHardness, 0.5 * chaos, 1) * this.blendMod(this.material.baseDensity, 0.1, 1)
             for (let i = 0; i < this.prefix.length; i++) {
-                this.damage[0] *= this.blendMod(this.prefix[0].baseHardnessMod, 0.25, 1) * this.blendMod(this.prefix[0].baseDamageMod, 0.75, 1)
+                this.damage[0] *= this.blendMod(this.prefix[0].baseHardnessMod, 0.25 * chaos, 1) * this.blendMod(this.prefix[0].baseDamageMod, 0.75 * chaos, 1)
             }
         }
         else {
             //blunt
-            this.damage[1] = this.type.baseDamage * this.blendMod(this.material.baseHardness, 0.1, 1) * this.blendMod(this.material.baseDensity, 0.5, 1)
+            this.damage[1] = this.type.baseDamage * this.blendMod(this.material.baseHardness, 0.1, 1) * this.blendMod(this.material.baseDensity, 0.5 * chaos, 1)
             for (let i = 0; i < this.prefix.length; i++) {
-                this.damage[0] *= this.blendMod(this.prefix[0].baseDensityMod, 0.25, 1) * this.blendMod(this.prefix[0].baseDamageMod, 0.75, 1)
+                this.damage[0] *= this.blendMod(this.prefix[0].baseDensityMod, 0.25 * chaos, 1) * this.blendMod(this.prefix[0].baseDamageMod, 0.75 * chaos, 1)
             }
         }
 
@@ -225,7 +227,7 @@ class Weapon extends Item {
                 preoutput += '<span className="float-left"><i class="bi bi-' + Weapon.damageIcons[i] + '"></i></span> ' + this.formatString(this.damage[i]*this.swingSpeed) + "/s<br/>" + this.formatString(this.damage[i]) + "/h</span>"
                 */
                 preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle ' + Weapon.damageColors[i] + " " + width + '">'
-                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + this.formatString(this.damage[i]) + " d/h<br/>" + this.formatString(this.damage[i]*this.swingSpeed) + " d/s</span>"
+                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + Weapon.formatString(this.damage[i]) + " d/h<br/>" + Weapon.formatString(this.damage[i]*this.swingSpeed) + " d/s</span>"
             }
             totDam += this.damage[i]
         }
@@ -246,7 +248,7 @@ class Weapon extends Item {
 
         /** one box option*/
         output += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle dark:bg-slate-500 dark:text-slate-300 ' + width + '">'
-        output += this.formatString(this.swingSpeed) + " h/s<br/>" + this.formatString(totDam) + " d/h<br/>" + this.formatString(totDam*this.swingSpeed) + " d/s</span>"
+        output += Weapon.formatString(this.swingSpeed) + " h/s<br/>" + Weapon.formatString(totDam) + " d/h<br/>" + Weapon.formatString(totDam*this.swingSpeed) + " d/s</span>"
         //output += '<span className="float-left"><i class="bi bi-boxes"></i></span> ' + this.formatString(totDam*this.swingSpeed) + "/s<br/>" + this.formatString(totDam) + "/h<br/>" + this.formatString(1) + "h/s</span>"
 
 
@@ -256,16 +258,16 @@ class Weapon extends Item {
         return output + preoutput + ""
     }
 
-    randItem(input: any) {
+    static randItem(input: any) {
         return input[Math.floor(Math.random() * input.length)]
     }
 
-    randInt(max: number) {
+    static randInt(max: number) {
         /** max is  inclusive*/
         return Math.floor(Math.random() * (max+1))
     }
 
-    formatString(input: number) {
+    static formatString(input: number) {
         if (input > 100000000) return (input/1000000).toFixed(0) + "m"
         else if (input > 10000000) return (input/1000000).toFixed(1) + "m"
         else if (input > 1000000) return (input/1000000).toFixed(2) + "m"
