@@ -116,6 +116,8 @@ const move = (source: Weapon[], destination: Weapon[], droppableSource: Draggabl
 
 const windowShown = "z-10 block w-[100%] h-screen backdrop-blur	"
 var timer: NodeJS.Timeout
+const delveButtonClass = "text-slate-950 dark:text-slate-50 font-bold rounded-xl absolute h-full bottom-0 mx-auto transition-all ease-out"
+var delveButtonClassCur = delveButtonClass
 
 
 class App extends Component {
@@ -189,13 +191,18 @@ class App extends Component {
 
   toggleDelve() {
     var d = !this.state.delving
-    this.setState({delving: d})
+    
+    const ss = (1/this.state.invItems[0].swingSpeed * 1000)
     if (d) {
-      timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
+      // set timeout to apply damage
+      timer = setTimeout(this.swing.bind(this), ss);
+      this.animateDelveButton(true, ss);
     }
     else {
       clearInterval(timer)
+      this.animateDelveButton(false, ss);
     }
+    this.setState({delving: d})
   }
 
 
@@ -203,10 +210,31 @@ class App extends Component {
     if (this.state.delving) {
       // deal damage
       if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(Math.max(...this.state.invItems[0].damage))
+      // call function again if still delving
+      if (this.state.delving) {
+        timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
+        this.animateDelveButton(true, 1/this.state.invItems[0].swingSpeed * 1000);
+      }
       // update page state
       this.setState({curDungeon: this.state.curDungeon})
-      // call function again if still delving
-      if (this.state.delving) timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
+    }
+  }
+
+  animateDelveButton(way: boolean, duration: number) {
+    if (way) {
+      delveButtonClassCur = delveButtonClass + ' animate-load'
+      var kek = document.getElementById("delveButton")
+      if (kek!=null){
+        console.log("fuck me " + duration.toFixed(0))
+        kek.setAttribute("style", "animation-duration: " + duration.toFixed(0) +'ms;');
+      }
+    }
+    else {
+      delveButtonClassCur = delveButtonClass + ' w-0'
+      var kek = document.getElementById("delveButton")
+      if (kek!=null){
+        kek.setAttribute("style", "");
+      }
     }
   }
 
@@ -275,6 +303,11 @@ class App extends Component {
           this.updateList(source.droppableId, result.get(source.droppableId))
 
       }
+
+      // reset delving to reset button animation and hopefully sync it with damage
+      if (destination.droppableId === "invItems" || source.droppableId === "invItems") {
+        this.animateDelveButton(false, 0);
+      }
   };
 
   render() {
@@ -314,7 +347,10 @@ class App extends Component {
           <div className="-z-10 relative w-screen h-screen">
             <div className="relative w-screen -z-10 h-auto">
               <div className="relative -z-10 bg-sky-500 h-96 justify-center">
-                <button className="z-10 bg-blue-500 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl absolute h-20 w-40 bottom-0 mx-auto -translate-x-1/2 left-1/2" onClick={()=>this.toggleDelve()}>{this.state.delving ? "Delving..." : "Delve?"}</button>
+                <button className={"text-slate-950 dark:text-slate-50 font-bold py-2 rounded-xl absolute h-20 bottom-0 mx-auto bg-transparent w-40 -translate-x-1/2 left-1/2"} onClick={()=>this.toggleDelve()}>{this.state.delving ? "Delving..." : "Delve?"}
+                  <div id="delveButton" className={delveButtonClassCur +" -z-20 bg-blue-500"}></div>
+                  <div className={delveButtonClass +" -z-30 bg-blue-600 w-40 w-full"}></div>
+                </button>
               </div>
               <DungeonContainer parentDungeon={this.state.curDungeon}></DungeonContainer>
             </div>

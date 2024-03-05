@@ -87,7 +87,7 @@ class Weapon extends Item {
             new WeaponPrefix("Broken", 1, 0.5, 1, 1, 0.0, 0.0),
             new WeaponPrefix("Shoddy", 1, 0.7, 1, 1, 0.0, 0.0),
             new WeaponPrefix("Rusty", 1, 0.8, 1, 1, 0.0, 0.0),
-            new WeaponPrefix("Chipped", 1, 0.8, 1, 1, 0.0, 0.0),
+            new WeaponPrefix("Chipped", 1, 0.9, 1, 1, 0.0, 0.0),
             new WeaponPrefix("Factory Refurbished", 1, 1, 1, 1, 0.0, 0.0),
             new WeaponPrefix("Tuned", 1.1, 1.1, 1, 1, 0.0, 0.0),
             new WeaponPrefix("Honed", 1.0, 1.2, 1, 1, 0.0, 0.0),
@@ -99,7 +99,7 @@ class Weapon extends Item {
         const potentialModPrefixes = [
             //new WeaponPrefix("",      1.0, 1.0, 1.0, 1.0, 0.0, 0.0),
             new WeaponPrefix("Dense",       0.8, 1.2, 1.5, 1.0, 0.0, 0.0),
-            new WeaponPrefix("Blunt",       0.8, 1.0, 1.1, 0.5, 0.0, 0.0),
+            new WeaponPrefix("Blunt",       1.0, 1.0, 1.1, 0.5, 0.0, 0.0),
             new WeaponPrefix("Lightweight", 1.2, 0.8, 0.8, 1.0, 0.0, 0.0),
             new WeaponPrefix("Greasy",      1.1, 1.0, 1.0, 1.0, 0.0, 0.0),
             new WeaponPrefix("Aerodynamic", 1.2, 1.0, 1.0, 1.0, 0.0, 0.0),
@@ -114,6 +114,9 @@ class Weapon extends Item {
             new WeaponPrefix("Irradiated ", 1.0, 1.0, 1.0, 1.0, 0.5, 0.0),
             new WeaponPrefix("Glowing ",    1.0, 1.0, 1.0, 1.0, 0.2, 0.0),
             new WeaponPrefix("Proximity Fused ", 1.0, 1.0, 1.0, 1.0, 0.0, 0.5), 
+            new WeaponPrefix("Rotary ",     2.0, 0.6, 1.0, 1.0, 0.0, 0.0), 
+            new WeaponPrefix("Stainless ",  1.0, 1.1, 1.1, 1.1, 0.0, 0.0),
+            new WeaponPrefix("Corrugated ", 1.2, 1.0, 1.0, 1.2, 0.0, 0.0),
         ]
 
         /** NAME, DENSITY (~0.5-2), HARDNESS (~0.5-2), MAGIC (0-2), EXPLOSIVE (0-2) */

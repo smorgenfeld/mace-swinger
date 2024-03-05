@@ -14,6 +14,15 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      keyframes: {
+        loading: {
+          '0%': {width:"0%"},
+          '100%': {width:"100%"},
+        }
+      },
+      animation: {
+        load: 'loading ease-in-out infinite'
+      }
     },
 
   },
