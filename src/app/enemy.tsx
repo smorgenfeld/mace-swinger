@@ -1,5 +1,7 @@
 import DungeonFloor from "./dungeonFloor"
+import DungeonArea from "./dungeonArea";
 import Weapon from "./weapon";
+
 
 class EnemyType {
     name: string;
@@ -36,59 +38,119 @@ class Enemy {
     name: string
     type: EnemyType
     prefix: EnemyPrefix[]
+    damResist: number[]
+    damOutput: number[]
 
     parentDungeonFloor: DungeonFloor
 
     //sharp, blunt, magic/radiation, explosive
-    //name, basehp, baseDamResist, baseDamOutput
-    static enemyTypes: EnemyType[] = [
-        new EnemyType("Rat",                1,   [0.0, 0.0, 0.0, 0.0],  [1,  0,  0,  0]),
-        new EnemyType("Skeleton",           5,   [0.2, 0.0, 0.0, 0.0],  [0, 5, 0,  0]),
-        new EnemyType("Goblin",             5,   [0.0, 0.0, 0.0, 0.0],  [5, 0, 0,  0]),
-        new EnemyType("Cheesemonger",       15,  [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0]),
-        new EnemyType("Troll",              20,  [0.3, 0.0, 0.0, 0.0],  [0, 10, 0,  0]),
+    //name, basehp, baseDamResist (additive), baseDamOutput (multiplicative)
+    static enemyTypes:  {[key: string]: EnemyType} = {
+        "Rat":          new EnemyType("Rat",                1,   [0.0, 0.0, 0.0, 0.0],  [1,  0,  0,  0]),
+
+        "Spider":          new EnemyType("Spider",          2,   [0.0, 0.0, 0.0, 0.0],  [2,  0,  0,  0]),
+
+        "Skeleton":     new EnemyType("Skeleton",           5,   [0.2, 0.0, 0.5, 0.0],  [0, 5, 0,  0]),
+        "Zombie":       new EnemyType("Zombie",             5,   [0.0, 0.0, 0.5, 0.0],  [5, 0, 0,  0]),
+        "Ghost":        new EnemyType("Ghost",              5,   [0.9, 0.9, 0.9, 0.9],  [0, 0, 0,  0]),
+        "Lich":         new EnemyType("Lich",               30,   [0.2, 0.2, 0.5, 0.0],  [10, 0, 0,  0]),
+        "Wight":         new EnemyType("Wight",             30,   [0.2, 0.2, 0.5, 0.0],  [0, 10, 0,  0]),
+
+        "Goblin":       new EnemyType("Goblin",             5,   [0.0, 0.0, 0.0, 0.0],  [5, 0, 0,  0]),
+        "Bat":          new EnemyType("Bat",                2,   [0.9, 0.9, 0.9, 0.0],  [1, 0, 0,  0]),
+        "Bear":         new EnemyType("Bear",               15,  [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0]),
+        "Troll":        new EnemyType("Troll",              20,  [0.3, 0.0, 0.0, 0.0],  [0, 10, 0,  0]),
+
+        "Cheesemonger": new EnemyType("Cheesemonger",       10,  [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0]),
+        "Minstrel":     new EnemyType("Minstrel",           1,   [0.0, 0.0, 0.0, 0.0],  [0, 1, 0,  0]),
+        "Mayor":        new EnemyType("Mayor",              20,  [0.0, 0.0, 0.0, 0.0],  [0, 1, 0,  0]),
+
+        "Miner":        new EnemyType("Miner",              5,   [0.0, 0.5, 0.0, 0.5],   [5, 0, 0,  0]),
+        "Minor":        new EnemyType("Minor",              2,   [0.0, 0.0, 0.0, 0.0],   [0, 1, 0,  0]),
+        "Geologist":    new EnemyType("Geologist",          20,  [0.0, 0.0, 0.0, 0.0],   [0, 10, 0,  0]),
+
+        "Barista":      new EnemyType("Barista",            5,   [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0]),
+        "Astrologist":  new EnemyType("Astrologist",        2,   [0.0, 0.0, 0.0, 0.0],  [0, 5, 0,  0]),
+
+        "Safety Inspector":  new EnemyType("Safety Inspector",        10,   [0.2, 0.2, 0.2, 0.2],  [0, 5, 0,  0]),
+        "Torch Repairman":  new EnemyType("Torch Repairman",        10,   [0.2, 0.2, 0.2, 0.2],  [0, 5, 0,  0]),
         
-    ]
+    }
 
     static enemyPrefixArmor: EnemyPrefix[] = [
-        new EnemyPrefix("Padded",           1,   [0.0, 0.5, 0.0, 0.5],  [0,  0,  0,  0]),
-        new EnemyPrefix("Lead-lined",       1,   [0.0, 0.0, 0.5, 0.0],  [0,  0,  0,  0]),
-        new EnemyPrefix("Armored",          1,   [0.6, 0.1, 0.0, 0.2],  [0,  0,  0,  0]),
-        new EnemyPrefix("Scaled",           1,   [0.5, 0.0, 0.0, 0.0],  [0,  0,  0,  0]),
-        new EnemyPrefix("Naked",            1,   [-0.5, -0.5, 0.0, -0.5],  [0,  0,  0,  0]),
-        new EnemyPrefix("Warded",           1,   [0.5, 0.5, 0.5, 0.5],  [0,  0,  0,  0]),
-        new EnemyPrefix("Shielded",         1,   [0.5, 0.2, 0.0, 0.2],  [0,  0,  0,  0]),
+        new EnemyPrefix("Padded",           1,   [0.0, 0.5, 0.0, 0.5],  [1,  1,  1,  1]),
+        new EnemyPrefix("Lead-lined",       1,   [0.0, 0.0, 0.5, 0.0],  [1,  1,  1,  1]),
+        new EnemyPrefix("Armored",          1,   [0.6, 0.1, 0.0, 0.2],  [1,  1,  1,  1]),
+        new EnemyPrefix("Scaled",           1,   [0.5, 0.0, 0.0, 0.0],  [1,  1,  1,  1]),
+        new EnemyPrefix("Naked",            1,   [-0.5, -0.5, 0.0, -0.5],  [1,  1,  1,  1]),
+        new EnemyPrefix("Warded",           1,   [0.5, 0.5, 0.5, 0.5],  [1,  1,  1,  1]),
+        new EnemyPrefix("Shielded",         1,   [0.5, 0.2, 0.0, 0.2],  [1,  1,  1,  1]),
     ]
 
     static enemyPrefixAttribute: EnemyPrefix[] = [
-        new EnemyPrefix("Small",            0.5,   [0.0, 0.0, 0.2, 0.0],  [0.5,  0.5,  0.5,  0.5]),
-        new EnemyPrefix("Tiny",             0.25,  [0.0, 0.0, 0.5, 0.0],  [0.25,  0.25,  0.25,  0.25]),
+        new EnemyPrefix("Small",            0.5,   [0.0, 0.0, 0.0, 0.0],  [0.5,  0.5,  0.5,  0.5]),
+        new EnemyPrefix("Tiny",             0.25,  [0.0, 0.0, 0.0, 0.0],  [0.25,  0.25,  0.25,  0.25]),
         new EnemyPrefix("Tall",             1.25,  [0.0, 0.0, 0.0, 0.0],  [1.25,  1.25,  1.25,  1.25]),
-        new EnemyPrefix("Rotund",           2,     [0.0, 0.0, 0.0, 0.0],  [1,  1,  1,  1]),
+        new EnemyPrefix("Rotund",           1.5,     [0.0, 0.0, 0.0, 0.0],  [1,  1,  1,  1]),
         new EnemyPrefix("Musclebound",      1.5,   [0.0, 0.2, 0.0, 0.0],  [1.25,  1.25,  1,  1]),
-        new EnemyPrefix("Scrawny",          0.5,   [0.0, 0.0, 0.2, 0.0],  [0.75,  0.75,  1,  1]),
+        new EnemyPrefix("Scrawny",          0.5,   [0.0, 0.0, 0.0, 0.0],  [0.75,  0.75,  1,  1]),
+        new EnemyPrefix("Giant",            2,    [0.0, 0.0, 0.0, 0.0],  [1,  1,  1,  1]),
+    ]
+
+    static enemyPrefixState: EnemyPrefix[] = [
+        new EnemyPrefix("Drunken", 1, [0.0, 0.0, 0.0, 0.0], [0.5,  0.5,  0.5,  0.5]),
+        new EnemyPrefix("Wired", 1,   [0.0, 0.0, 0.0, 0.0], [1.2,  1.2,  1.2,  1.2]),
+    ]
+
+    static enemyPrefixJoke: EnemyPrefix[] = [
+        new EnemyPrefix("Generic", 1, [0.0, 0.0, 0.0, 0.0], [1, 1, 1, 1]),
+        new EnemyPrefix("Opaque",  1, [0.0, 0.0, 0.0, 0.0], [1, 1, 1, 1]),
+        new EnemyPrefix("Common",  1, [0.0, 0.0, 0.0, 0.0], [1, 1, 1, 1]),
+        new EnemyPrefix("Ordinary",  1, [0.0, 0.0, 0.0, 0.0], [1, 1, 1, 1]),
+        new EnemyPrefix("Ununusual",  1, [0.0, 0.0, 0.0, 0.0], [1, 1, 1, 1]),
+        new EnemyPrefix("Blind",  1, [0.0, 0.0, 0.0, 0.0], [0, 0, 0, 0]),
     ]
     
 
-    constructor(parentDungeonFloor: DungeonFloor) {
+    constructor(parentDungeonFloor: DungeonFloor, isBoss: boolean) {
         this.level = parentDungeonFloor.level
         
         this.parentDungeonFloor = parentDungeonFloor
+        
+        if (isBoss) this.type = Enemy.enemyTypes[Weapon.randItem(this.parentDungeonFloor.parentArea.bossTypes)]
+        else this.type = Enemy.enemyTypes[Weapon.randItem(this.parentDungeonFloor.parentArea.allowedList)]
 
-        this.type = Weapon.randItem(Enemy.enemyTypes)
-        this.maxhp = this.type.baseHP * Math.pow(1.3,this.level)
+        this.maxhp = this.type.baseHP * Math.pow(1.3,this.level) / this.parentDungeonFloor.parentArea.enemyNumMod
 
-        if (Weapon.randInt(9) <= 3) this.prefix = [Weapon.randItem(Enemy.enemyPrefixArmor)];
-        else if (Weapon.randInt(9) <= 8) this.prefix = [Weapon.randItem(Enemy.enemyPrefixAttribute)];
+        const randNum = Weapon.randInt(9)
+        if (randNum <= 3) this.prefix = [Weapon.randItem(Enemy.enemyPrefixArmor)];
+        else if (randNum <= 6) this.prefix = [Weapon.randItem(Enemy.enemyPrefixAttribute)];
+        else if (randNum <= 7) this.prefix = [Weapon.randItem(Enemy.enemyPrefixState)];
+        else if (randNum <= 8) this.prefix = [Weapon.randItem(Enemy.enemyPrefixJoke)];
         else {
             this.prefix = [Weapon.randItem(Enemy.enemyPrefixArmor), Weapon.randItem(Enemy.enemyPrefixAttribute)]
         }
+
+        this.damResist = [...this.type.baseDamResist]
+        this.damOutput = [...this.type.baseDamOutput]
 
         this.name = this.type.name
         for (let i = 0; i < this.prefix.length; i++) {
             this.name = this.prefix[i].name + " "
             this.maxhp *= this.prefix[i].modHP
+            for (let j = 0; j < this.damResist.length; j++) {
+                this.damResist[j] = Math.max(0,Math.min(0.9, this.damResist[j] + this.prefix[i].modDamResist[j]))
+                this.damOutput[j] *= this.prefix[i].modDamOutput[j]
+            }
         }
+
+        //add area effects
+        for (let j = 0; j < this.damResist.length; j++) {
+            this.damResist[j] = Math.max(0,Math.min(0.9, this.damResist[j] + this.parentDungeonFloor.parentArea.enemyDamResist[j]))
+            //this.damOutput[j] *= this.prefix[i].modDamOutput[j]
+        }
+
+        this.maxhp = Math.max(1, this.maxhp) 
         this.name += this.type.name
 
         
@@ -96,10 +158,58 @@ class Enemy {
 
     }
 
-    dealDamage(toDeal: number) {
-        this.curhp = Math.max(0,this.curhp-toDeal)
+    dealDamage(toDeal: number[]) {
+        var damDealt = 0
+        for (let i = 0; i < this.damResist.length; i++) {
+            damDealt += (1-this.damResist[i]) * toDeal[i]
+        }
+        this.curhp = Math.max(0,this.curhp-damDealt)
         if (this.curhp == 0) return true
         return false
+    }
+
+    getHTMLResists() {
+        const width = "w-[2.5rem]"
+
+        var preoutput = ""
+        var resists = false
+
+        // handle damage resist breakdown
+        for (let i = 0; i < this.damResist.length; i++) {
+            if (this.damResist[i] > 0) {
+                resists = true
+                preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle ' + Weapon.damageColors[i] + " " + width + '">'
+                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + Weapon.formatString(this.damResist[i], false) + " </span>"
+            }
+            //totDam += this.damage[i]
+        }
+        if (!resists) {
+            preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle dark:bg-slate-500 dark:text-slate-300 ' + width + '">'
+            preoutput += '<i class="bi margin:auto bi-x"></i><br>NA</span>'
+        }
+        return preoutput
+    }
+
+    getHTMLDeals() {
+        const width = "w-[2.5rem]"
+
+        var preoutput = ""
+        var resists = false
+
+        // handle damage output breakdown
+        for (let i = 0; i < this.damResist.length; i++) {
+            if (this.damOutput[i] > 0) {
+                resists = true
+                preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle ' + Weapon.damageColors[i] + " " + width + '">'
+                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + Weapon.formatString(this.damOutput[i], false) + " </span>"
+            }
+            //totDam += this.damage[i]
+        }
+        if (!resists) {
+            preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle dark:bg-slate-500 dark:text-slate-300 ' + width + '">'
+            preoutput += '<i class="bi margin:auto bi-x"></i><br>NA</span>'
+        }
+        return preoutput
     }
 }
 

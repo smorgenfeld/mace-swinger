@@ -9,16 +9,17 @@ interface IDungeonContainer {
 
 const DungeonContainer: FC<IDungeonContainer> = (props) => {
 
-    var areas = []
+    var areaHTML = []
     for (let i = 0; i < props.parentDungeon.baseLevel; i++) {
-        areas.push(Dungeon.layerColors[i] + " h-96 -z-10")
+        areaHTML.push(Dungeon.layerColors[i] + " h-[" + (10*props.parentDungeon.baseLevel).toString()+"rem]" + " -z-10 p-2")
     }
-    const height = "h-[" + (96*props.parentDungeon.baseLevel).toString()+"px]"
+    const height = "h-[" + (10*props.parentDungeon.baseLevel).toString()+"rem]"
 
     return (
         <div className="h-auto">
-            {areas.map((area, index) => (
-            <div className={area} key={index}>
+            {areaHTML.map((html, index) => (
+            <div className={html} key={index}>
+                <div className='z-20 left-0 w-auto p-2 mb-2 bg-slate-600 rounded-xl text-slate-300 text-m'><b>{props.parentDungeon.areas[index].name}</b></div>
                 {props.parentDungeon.floors.slice(index*10, (index+1)*10).map((floor, index) => (
                 <DungeonFloorContainer parentFloor={floor} key={index}/>
                 ))}

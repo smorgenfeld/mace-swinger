@@ -21,7 +21,7 @@ const config: Config = {
         }
       },
       animation: {
-        load: 'loading ease-in-out infinite'
+        load: 'loading linear infinite'
       }
     },
 

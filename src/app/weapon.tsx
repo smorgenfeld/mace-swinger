@@ -165,7 +165,7 @@ class Weapon extends Item {
         // handle swing speed
         this.swingSpeed = this.type.baseSwingSpeed * this.blendMod(1/this.material.baseDensity, 0.5 * chaos, 1)
         for (let i = 0; i < this.prefix.length; i++) {
-            this.swingSpeed *= this.blendMod(1/this.prefix[0].baseDensityMod, 0.25 * chaos, 1) * this.blendMod(1/this.prefix[0].baseSwingSpeedMod, 0.5 * chaos, 1)
+            this.swingSpeed *= this.blendMod(this.prefix[0].baseDensityMod, 0.25 * chaos, 1) * this.blendMod(this.prefix[0].baseSwingSpeedMod, 0.5 * chaos, 1)
         }
 
         // handle damage
@@ -219,8 +219,6 @@ class Weapon extends Item {
         const width = "w-[5rem]"
 
         var preoutput = ""
-        var tempString1=""
-        var tempString2=""
 
         // handle damage type breakdown
         for (let i = 0; i < this.damage.length; i++) {
@@ -230,7 +228,7 @@ class Weapon extends Item {
                 preoutput += '<span className="float-left"><i class="bi bi-' + Weapon.damageIcons[i] + '"></i></span> ' + this.formatString(this.damage[i]*this.swingSpeed) + "/s<br/>" + this.formatString(this.damage[i]) + "/h</span>"
                 */
                 preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle ' + Weapon.damageColors[i] + " " + width + '">'
-                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + Weapon.formatString(this.damage[i]) + " d/h<br/>" + Weapon.formatString(this.damage[i]*this.swingSpeed) + " d/s</span>"
+                preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + Weapon.formatString(this.damage[i], false) + " d/h<br/>" + Weapon.formatString(this.damage[i]*this.swingSpeed, false) + " d/s</span>"
             }
             totDam += this.damage[i]
         }
@@ -251,7 +249,7 @@ class Weapon extends Item {
 
         /** one box option*/
         output += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle dark:bg-slate-500 dark:text-slate-300 ' + width + '">'
-        output += Weapon.formatString(this.swingSpeed) + " h/s<br/>" + Weapon.formatString(totDam) + " d/h<br/>" + Weapon.formatString(totDam*this.swingSpeed) + " d/s</span>"
+        output += Weapon.formatString(this.swingSpeed, false) + " h/s<br/>" + Weapon.formatString(totDam, false) + " d/h<br/>" + Weapon.formatString(totDam*this.swingSpeed, false) + " d/s</span>"
         //output += '<span className="float-left"><i class="bi bi-boxes"></i></span> ' + this.formatString(totDam*this.swingSpeed) + "/s<br/>" + this.formatString(totDam) + "/h<br/>" + this.formatString(1) + "h/s</span>"
 
 
@@ -270,7 +268,7 @@ class Weapon extends Item {
         return Math.floor(Math.random() * (max+1))
     }
 
-    static formatString(input: number) {
+    static formatString(input: number, roundOnes: boolean) {
         if (input > 100000000) return (input/1000000).toFixed(0) + "m"
         else if (input > 10000000) return (input/1000000).toFixed(1) + "m"
         else if (input > 1000000) return (input/1000000).toFixed(2) + "m"
@@ -278,9 +276,11 @@ class Weapon extends Item {
         else if (input > 10000) return (input/1000).toFixed(1) + "k"
         else if (input > 1000) return (input/1000).toFixed(2) + "k"
         else if (input > 100) return input.toFixed(0)
-        else return input.toFixed(1)
+        else {
+            if (roundOnes) return input.toFixed(0)
+            else return input.toFixed(1)
+        }
     }
-    
 
 }
 

@@ -209,7 +209,7 @@ class App extends Component {
   swing() {
     if (this.state.delving) {
       // deal damage
-      if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(Math.max(...this.state.invItems[0].damage))
+      if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(this.state.invItems[0].damage)
       // call function again if still delving
       if (this.state.delving) {
         timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
@@ -225,7 +225,6 @@ class App extends Component {
       delveButtonClassCur = delveButtonClass + ' animate-load'
       var kek = document.getElementById("delveButton")
       if (kek!=null){
-        console.log("fuck me " + duration.toFixed(0))
         kek.setAttribute("style", "animation-duration: " + duration.toFixed(0) +'ms;');
       }
     }
