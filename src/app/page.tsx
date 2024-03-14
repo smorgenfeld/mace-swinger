@@ -15,6 +15,7 @@ import { DragDropContext, Droppable, Draggable, Id, OnDragEndResponder, DropResu
 import Dungeon from './dungeon';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 import DungeonContainer from "./dungeonContainer";
+import Player from "./player";
 
 /*
 
@@ -90,45 +91,37 @@ function getItems(count: number, offset = 0) {
 
 // a little function to help us with reordering the result
 const reorder = (list: Weapon[], startIndex: number, endIndex: number) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-
-  return result;
+  const [removed] = list.splice(startIndex, 1);
+  list.splice(endIndex, 0, removed);
 };
 
 /**
  * Moves an item from one list to another list.
  */
-const move = (source: Weapon[], destination: Weapon[], droppableSource: DraggableLocation, droppableDestination: DraggableLocation) => {
-  const sourceClone = Array.from(source);
-  const destClone = Array.from(destination);
-  const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-  destClone.splice(droppableDestination.index, 0, removed);
-
-  const result: Map<string, Weapon[]> = new Map();
-  result.set(droppableSource.droppableId, sourceClone)
-  result.set(droppableDestination.droppableId, destClone)
-
-  return result;
+const move = (source: Weapon[], dest: Weapon[], droppableSource: DraggableLocation, droppableDestination: DraggableLocation) => {
+  const [removed] = source.splice(droppableSource.index, 1);
+  removed.curParId = droppableDestination.droppableId
+  dest.splice(droppableDestination.index, 0, removed);
 };
 
 const windowShown = "z-10 block w-[100%] h-screen backdrop-blur	"
 var timer: NodeJS.Timeout
+var timerEnemy: NodeJS.Timeout
 const delveButtonClass = "text-slate-950 dark:text-slate-50 font-bold rounded-xl absolute h-full bottom-0 mx-auto transition-all ease-out"
 var delveButtonClassCur = delveButtonClass
+
+const enemyHitButtonClass = "z-20 left-0 h-[1rem] mt-2 transition-all ease-out bg-yellow-500 "
+var enemyHitButtonClassCur = enemyHitButtonClass
+
 
 
 class App extends Component {
 
   state = {
-      newItems: getItems(25),
-      invItems: getItems(3, 25),
+      p: new Player("dipshit"),
       trashItems: [],
       windowsShown: [false, false, false],
       curSource: [false, false, false],
-      maxInvSize: [3, 10], // inven, loot pool
       delving: false,
       curDungeon: new Dungeon(3)
   };
@@ -192,15 +185,20 @@ class App extends Component {
   toggleDelve() {
     var d = !this.state.delving
     
-    const ss = (1/this.state.invItems[0].swingSpeed * 1000)
+    const ss = (1/this.state.p.curWeapon.swingSpeed * 1000)
+    const eSS = (1/this.state.curDungeon.getActiveEnemy().swingSpeed * 1000)
     if (d) {
       // set timeout to apply damage
       timer = setTimeout(this.swing.bind(this), ss);
+      timerEnemy = setTimeout(this.enemySwing.bind(this), eSS);
       this.animateDelveButton(true, ss);
+      this.animateEnemyHitButton(true, eSS);
     }
     else {
       clearInterval(timer)
+      clearInterval(timerEnemy)
       this.animateDelveButton(false, ss);
+      this.animateEnemyHitButton(false, eSS);
     }
     this.setState({delving: d})
   }
@@ -209,11 +207,25 @@ class App extends Component {
   swing() {
     if (this.state.delving) {
       // deal damage
-      if (this.state.invItems.length>0) this.state.curDungeon.dealDamage(this.state.invItems[0].damage)
+      if (this.state.p.inv.length>0) this.state.curDungeon.takeDamage(this.state.p.curWeapon.damage)
       // call function again if still delving
       if (this.state.delving) {
-        timer = setTimeout(this.swing.bind(this), 1/this.state.invItems[0].swingSpeed * 1000);
-        this.animateDelveButton(true, 1/this.state.invItems[0].swingSpeed * 1000);
+        timer = setTimeout(this.swing.bind(this), 1/this.state.p.curWeapon.swingSpeed * 1000);
+        this.animateDelveButton(true, 1/this.state.p.curWeapon.swingSpeed * 1000);
+      }
+      // update page state
+      this.setState({curDungeon: this.state.curDungeon})
+    }
+  }
+
+  enemySwing() {
+    if (this.state.delving) {
+      // deal damage to player
+      if (this.state.curDungeon.dealDamage()) this.state.p.escapeDungeon()
+      // call function again if still delving
+      if (this.state.delving) {
+        timer = setTimeout(this.enemySwing.bind(this), 1/this.state.curDungeon.getActiveEnemy().swingSpeed * 1000);
+        this.animateEnemyHitButton(true, 1/this.state.curDungeon.getActiveEnemy().swingSpeed * 1000);
       }
       // update page state
       this.setState({curDungeon: this.state.curDungeon})
@@ -237,18 +249,34 @@ class App extends Component {
     }
   }
 
+  animateEnemyHitButton(way: boolean, duration: number) {
+    if (way) {
+      enemyHitButtonClassCur = enemyHitButtonClass + ' animate-load'
+      var kek = document.getElementById("activeHitBar")
+      if (kek!=null){
+        kek.setAttribute("style", "animation-duration: " + duration.toFixed(0) +'ms;');
+        kek.setAttribute("className", enemyHitButtonClassCur)
+      }
+    }
+    else {
+      enemyHitButtonClassCur = enemyHitButtonClass + ' w-0'
+      var kek = document.getElementById("activeHitBar")
+      if (kek!=null){
+        kek.setAttribute("style", "");
+        kek.setAttribute("className", enemyHitButtonClassCur)
+      }
+    }
+  }
+
   getList(id: Id) {
-    if (id === 'newItems') return this.state.newItems;
-    else if (id === 'invItems') return this.state.invItems
+    if (id === 'newItems') return this.state.p.loot;
+    else if (id === 'invItems') return this.state.p.inv;
     return this.state.trashItems;
   }
 
-  updateList(id: string, input: Weapon[] | undefined) {
-    if (input!=undefined) {
-      if (id === "newItems") this.setState({newItems: input})
-      else if (id === "invItems") this.setState({invItems: input})
-    }
-  
+  updateListDOMs(){//id: string, input: Weapon[] | undefined) {
+    this.state.p.updateActiveWeapon();
+    this.setState({p: this.state.p})
   }
 
   onDragStart = (start: DragStart) => {
@@ -275,31 +303,24 @@ class App extends Component {
 
       // dropped outside the list
       if (!destination) {
-          return;
+        return;
+      }
+      else if (destination.droppableId === 'trash' && this.state.p.inv.length <= 1) {
+        //don't let player throw away weapon
+        //janky animation so try to disable elsewhere too
+        console.log('prevented last trashed weapon the janky way :(')
+        return;
       }
 
       if (source.droppableId === destination.droppableId) {
-          const items = reorder(
-              this.getList(source.droppableId),
-              source.index,
-              destination.index
-          );
-
-          this.updateList(source.droppableId, items)
+        reorder(this.getList(source.droppableId), source.index, destination.index)
+        this.updateListDOMs()
 
       } else {
         console.log(source.droppableId)
         console.log(destination.droppableId)
-          const result = move(
-              this.getList(source.droppableId),
-              this.getList(destination.droppableId),
-              source,
-              destination
-          );
-
-          
-          this.updateList(destination.droppableId, result.get(destination.droppableId))
-          this.updateList(source.droppableId, result.get(source.droppableId))
+        move(this.getList(source.droppableId),this.getList(destination.droppableId),source,destination);
+        this.updateListDOMs()
 
       }
 
@@ -314,7 +335,7 @@ class App extends Component {
         <div className={this.state.windowsShown[0] ? "z-0 w-full flex justify-center"  :"z-0 w-full flex justify-center"}>
           <div className="fixed top-0 w-full">
             {/** quick inv bar idk not a huge fan tbh*/}
-            <div className="z-0 bg-slate-800 dark:text-slate-50 py-2 px-4 fixed top-0 p-1 w-screen"><b>Loot:</b> {this.state.newItems.length}  <b>Wood:</b> 0  <b>Stone:</b> 0 <b>Yeet</b> 0</div>
+            <div className="z-0 bg-slate-800 dark:text-slate-50 py-2 px-4 fixed top-0 p-1 w-screen"><b>Loot:</b> {this.state.p.loot.length}  <b>Wood:</b> 0  <b>Stone:</b> 0 <b>Yeet</b> 0</div>
 
             {/** navigation buttons */ }
             <button className="z-20 bg-blue-500 text-slate-950 dark:text-slate-50 font-bold py-2 px-4 rounded-xl fixed bottom-6 right-[10%] h-[10%] w-[33%]" onClick={()=>this.toggleWindows(1)}>Loot</button>
@@ -324,9 +345,9 @@ class App extends Component {
             <div className={this.state.windowsShown[1] ? windowShown : "hidden"}>
               <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
                 <div className="p-0 space-y-3">
-                  <ItemContainer items={this.state.newItems} newId={"newItems"} title="Loot" maxSize={this.state.maxInvSize[1]} isCurSource={this.state.curSource[1]} stacked={true}/>
-                  <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
-                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize[0]} isCurSource={this.state.curSource[2]} stacked={false}/>
+                  <ItemContainer p={this.state.p} items={this.state.p.loot} newId={"newItems"} title="Loot" maxSize={this.state.p.maxLootSize} isCurSource={this.state.curSource[1]} stacked={true}/>
+                  <ItemContainer p={this.state.p} items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
+                  <ItemContainer p={this.state.p} items={this.state.p.inv} newId={"invItems"} title="Inventory" maxSize={this.state.p.maxInvSize} isCurSource={this.state.curSource[2]} stacked={false}/>
                 </div>
               </DragDropContext>
            </div>
@@ -335,8 +356,8 @@ class App extends Component {
             <div className={this.state.windowsShown[2] ? windowShown : "hidden"}>
               <DragDropContext onDragEnd={this.onDragEnd} onDragStart={this.onDragStart}>
                 <div className="p-0 space-y-3">
-                  <ItemContainer items={this.state.invItems} newId={"invItems"} title="Inventory" maxSize={this.state.maxInvSize[0]} isCurSource={this.state.curSource[2]} stacked={false} />
-                  <ItemContainer items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
+                  <ItemContainer p={this.state.p} items={this.state.p.inv} newId={"invItems"} title="Inventory" maxSize={this.state.p.maxInvSize} isCurSource={this.state.curSource[2]} stacked={false} />
+                  <ItemContainer p={this.state.p} items={[]} newId={"trash"} title="Trash" maxSize={1} isCurSource={this.state.curSource[1]} stacked={false}/>
                 </div>
               </DragDropContext>
             </div>

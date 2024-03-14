@@ -1,4 +1,5 @@
 import Item from "./item"
+import Player from "./player";
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
 class WeaponType {
@@ -111,12 +112,16 @@ class Weapon extends Item {
             new WeaponPrefix("Serrated",    0.9, 1.1, 1.0, 1.0, 0.0, 0.0),
             new WeaponPrefix("Keen",        0.9, 1.1, 1.0, 1.2, 0.0, 0.0),
             new WeaponPrefix("Sticky",      1.2, 1.1, 1.0, 1.0, 0.0, 0.0),
-            new WeaponPrefix("Irradiated ", 1.0, 1.0, 1.0, 1.0, 0.5, 0.0),
-            new WeaponPrefix("Glowing ",    1.0, 1.0, 1.0, 1.0, 0.2, 0.0),
-            new WeaponPrefix("Proximity Fused ", 1.0, 1.0, 1.0, 1.0, 0.0, 0.5), 
-            new WeaponPrefix("Rotary ",     2.0, 0.6, 1.0, 1.0, 0.0, 0.0), 
-            new WeaponPrefix("Stainless ",  1.0, 1.1, 1.1, 1.1, 0.0, 0.0),
-            new WeaponPrefix("Corrugated ", 1.2, 1.0, 1.0, 1.2, 0.0, 0.0),
+            new WeaponPrefix("Irradiated", 1.0, 1.0, 1.0, 1.0, 0.5, 0.0),
+            new WeaponPrefix("Glowing",    1.0, 1.0, 1.0, 1.0, 0.2, 0.0),
+            new WeaponPrefix("Proximity Fused", 1.0, 1.0, 1.0, 1.0, 0.0, 0.5), 
+            new WeaponPrefix("Rotary",     2.0, 0.6, 1.0, 1.0, 0.0, 0.0), 
+            new WeaponPrefix("Stainless",  1.0, 1.1, 1.1, 1.1, 0.0, 0.0),
+            new WeaponPrefix("Corrugated", 1.2, 1.0, 1.0, 1.2, 0.0, 0.0),
+            new WeaponPrefix("Inflatable", 1.2, 0.8, 0.2, 0.2, 0.0, 0.0),
+            new WeaponPrefix("Spring-loaded", 1.3, 1.0, 1.0, 1.0, 0.0, 0.0),
+            new WeaponPrefix("Pump-action", 0.8, 1.2, 1.0, 1.0, 0.0, 0.0),
+            new WeaponPrefix("Cordless", 1.2, 1.0, 1.0, 1.0, 0.0, 0.0),
         ]
 
         /** NAME, DENSITY (~0.5-2), HARDNESS (~0.5-2), MAGIC (0-2), EXPLOSIVE (0-2) */
@@ -203,7 +208,7 @@ class Weapon extends Item {
 
         //levelize damage - x1.25/level
         for (let i = 0; i < this.damage.length; i++) {
-            this.damage[i] *= Math.pow(1.25,this.level)
+            this.damage[i] *= Math.pow(Player.weaponDamageScale,this.level)
         }
 
         this.serialId = super.serialIdGenerator()

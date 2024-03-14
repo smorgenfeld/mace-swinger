@@ -63,18 +63,24 @@ class DungeonArea {
         new AreaPrefix("Well-lit", undefined, undefined, undefined, ["Torch Repairman"]),
         new AreaPrefix("Gentrified", undefined, undefined, undefined, ["Barista", "Astrologist"]),
         new AreaPrefix("Crystalline", [0.5, 0, 0, 0]),
-        new AreaPrefix("Overcrowded", undefined, undefined, 5),
+        new AreaPrefix("Overcrowded", undefined, undefined, 2),
+        new AreaPrefix("Empty", undefined, undefined, 0.2, ["Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat"]),
+        new AreaPrefix("Infested", undefined, undefined, 1, ["Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat"]),
         new AreaPrefix("OSHA-Compliant", [0.2, 0.2, 0.5, 0.5],  [0.2, 0.2, 0.5, 0.5], undefined, ["Safety Inspector"]),
+
+        new AreaPrefix("Spooky", undefined, undefined, undefined, ["Ghost", "Ghost"]),
+        new AreaPrefix("Public", undefined, undefined, undefined, ["Cheesemonger", "Minstrel", "Drunkard"]),
         
     ]
 
     static types: AreaType[] = [
         new AreaType("Crypt", ["Rat", "Skeleton", "Zombie", "Ghost", "Spider"], ["Lich"]),
         new AreaType("Barrow", ["Rat", "Skeleton", "Zombie"], ["Wight"]),
-        new AreaType("Hamlet", ["Rat", "Cheesemonger", "Minstrel"], ["Mayor"]),
+        new AreaType("Hamlet", ["Rat", "Cheesemonger", "Minstrel", "Drunkard"], ["Mayor"]),
         new AreaType("Cave", ["Rat", "Bat", "Goblin", "Bear", "Spider"], ["Troll"]),
         new AreaType("Warren", ["Rat", "Rat", "Rat", "Rat", "Rat", "Rat", "Rat"], ["Rat"]),
-        new AreaType("Mine", ["Rat", "Miner", "Minor"], ["Geologist"]),
+        new AreaType("Mineshaft", ["Rat", "Miner", "Minor"], ["Geologist"]),
+        //new AreaType("Bunker", ["Rat"], ["Rat"]), //change
     ]
     
 

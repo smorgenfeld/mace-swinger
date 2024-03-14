@@ -4,6 +4,7 @@ import ItemDraggable from './draggable';
 import Item from './item';
 import Weapon from './item';
 import { Droppable } from '@hello-pangea/dnd'
+import Player from './player';
 
 interface IItemContainer {
     items: Item[];
@@ -11,7 +12,8 @@ interface IItemContainer {
     title: string;
     maxSize: number;
     isCurSource: boolean;
-    stacked: boolean
+    stacked: boolean;
+    p: Player;
 }
 
 
@@ -62,7 +64,7 @@ const ItemContainer: FC<IItemContainer> = (props) => {
   }
 
   function disableIfTooManyChildren(curChildCount: number) {
-    if (props.stacked) return true
+    if (props.stacked) return true // || (props.p.inv.length <= 1 && props.newId === "trash")) return true
     else if (props.isCurSource) {return false}
     else return curChildCount >= props.maxSize
   }
