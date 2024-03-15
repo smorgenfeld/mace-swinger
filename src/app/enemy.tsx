@@ -53,28 +53,28 @@ class Enemy {
 
         "Spider":          new EnemyType("Spider",          2,   [0.0, 0.0, 0.0, 0.0],  [2,  0,  0,  0], 2),
 
-        "Skeleton":     new EnemyType("Skeleton",           5,   [0.2, 0.0, 0.5, 0.0],  [0, 5, 0,  0], 1.2),
-        "Zombie":       new EnemyType("Zombie",             5,   [0.0, 0.0, 0.5, 0.0],  [5, 0, 0,  0], 0.5),
+        "Skeleton":     new EnemyType("Skeleton",           5,   [0.1, 0.0, 0.5, 0.0],  [0, 3, 0,  0], 1.2),
+        "Zombie":       new EnemyType("Zombie",             5,   [0.0, 0.0, 0.5, 0.0],  [3, 0, 0,  0], 0.5),
         "Ghost":        new EnemyType("Ghost",              5,   [0.9, 0.9, 0.9, 0.9],  [0, 0, 0,  0], 1),
-        "Lich":         new EnemyType("Lich",               30,   [0.2, 0.2, 0.5, 0.0],  [10, 0, 0,  0], 1),
-        "Wight":         new EnemyType("Wight",             30,   [0.2, 0.2, 0.5, 0.0],  [0, 10, 0,  0], 1),
+        "Lich":         new EnemyType("Lich",               30,   [0.2, 0.2, 0.5, 0.0],  [8, 0, 0,  0], 1),
+        "Wight":         new EnemyType("Wight",             30,   [0.2, 0.2, 0.5, 0.0],  [0, 8, 0,  0], 1),
 
-        "Goblin":       new EnemyType("Goblin",             5,   [0.0, 0.0, 0.0, 0.0],  [5, 0, 0,  0], 1.2),
+        "Goblin":       new EnemyType("Goblin",             5,   [0.0, 0.0, 0.0, 0.0],  [3, 0, 0,  0], 1.2),
         "Bat":          new EnemyType("Bat",                2,   [0.9, 0.9, 0.9, 0.0],  [1, 0, 0,  0], 1),
-        "Bear":         new EnemyType("Bear",               15,  [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0], 0.7),
-        "Troll":        new EnemyType("Troll",              20,  [0.3, 0.0, 0.0, 0.0],  [0, 10, 0,  0], 0.3),
+        "Bear":         new EnemyType("Bear",               15,  [0.0, 0.0, 0.0, 0.0],  [0, 5, 0,  0], 0.7),
+        "Troll":        new EnemyType("Troll",              20,  [0.3, 0.0, 0.0, 0.0],  [0, 8, 0,  0], 0.3),
 
-        "Cheesemonger": new EnemyType("Cheesemonger",       10,  [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0], 1),
+        "Cheesemonger": new EnemyType("Cheesemonger",       10,  [0.0, 0.0, 0.0, 0.0],  [0, 5, 0,  0], 1),
         "Minstrel":     new EnemyType("Minstrel",           1,   [0.0, 0.0, 0.0, 0.0],  [0, 1, 0,  0], 1.5),
-        "Drunkard":     new EnemyType("Drunkard",           5,   [0.0, 0.0, 0.0, 0.0],  [0, 3, 0,  0], 0.5),
+        "Drunkard":     new EnemyType("Drunkard",           5,   [0.0, 0.0, 0.0, 0.0],  [0, 1, 0,  0], 0.5),
         "Mayor":        new EnemyType("Mayor",              20,  [0.0, 0.0, 0.0, 0.0],  [0, 1, 0,  0], 1),
 
-        "Miner":        new EnemyType("Miner",              5,   [0.0, 0.5, 0.0, 0.5],   [5, 0, 0,  0], 0.5),
+        "Miner":        new EnemyType("Miner",              5,   [0.0, 0.3, 0.0, 0.5],   [3, 0, 0,  0], 0.5),
         "Minor":        new EnemyType("Minor",              2,   [0.0, 0.0, 0.0, 0.0],   [0, 1, 0,  0], 1),
-        "Geologist":    new EnemyType("Geologist",          20,  [0.0, 0.0, 0.0, 0.0],   [0, 10, 0,  0], 1),
+        "Geologist":    new EnemyType("Geologist",          20,  [0.0, 0.0, 0.0, 0.0],   [0, 5, 0,  0], 1),
 
-        "Barista":      new EnemyType("Barista",            5,   [0.0, 0.0, 0.0, 0.0],  [0, 10, 0,  0], 3),
-        "Astrologist":  new EnemyType("Astrologist",        2,   [0.0, 0.0, 0.0, 0.0],  [0, 5, 0,  0], 1),
+        "Barista":      new EnemyType("Barista",            5,   [0.0, 0.0, 0.0, 0.0],  [0, 3, 0,  0], 3),
+        "Astrologist":  new EnemyType("Astrologist",        2,   [0.0, 0.0, 0.0, 0.0],  [0, 1, 0,  0], 1),
 
         "Safety Inspector":  new EnemyType("Safety Inspector",        10,   [0.2, 0.2, 0.2, 0.2],  [0, 5, 0,  0], 1),
         "Torch Repairman":  new EnemyType("Torch Repairman",        10,   [0.2, 0.2, 0.2, 0.2],  [0, 5, 0,  0], 1),
@@ -82,13 +82,13 @@ class Enemy {
     }
 
     static enemyPrefixArmor: EnemyPrefix[] = [
-        new EnemyPrefix("Padded",           1,   [0.0, 0.5, 0.0, 0.5],  [1,  1,  1,  1]),
-        new EnemyPrefix("Lead-lined",       1,   [0.0, 0.0, 0.5, 0.0],  [1,  1,  1,  1]),
-        new EnemyPrefix("Armored",          1,   [0.6, 0.1, 0.0, 0.2],  [1,  1,  1,  1]),
-        new EnemyPrefix("Scaled",           1,   [0.5, 0.0, 0.0, 0.0],  [1,  1,  1,  1]),
+        new EnemyPrefix("Padded",           1,   [0.0, 0.3, 0.0, 0.3],  [1,  1,  1,  1]),
+        new EnemyPrefix("Lead-lined",       1,   [0.0, 0.0, 0.3, 0.0],  [1,  1,  1,  1]),
+        new EnemyPrefix("Armored",          1,   [0.3, 0.1, 0.0, 0.1],  [1,  1,  1,  1]),
+        new EnemyPrefix("Scaled",           1,   [0.3, 0.0, 0.0, 0.0],  [1,  1,  1,  1]),
         new EnemyPrefix("Naked",            1,   [-0.5, -0.5, 0.0, -0.5],  [1,  1,  1,  1]),
-        new EnemyPrefix("Warded",           1,   [0.5, 0.5, 0.5, 0.5],  [1,  1,  1,  1]),
-        new EnemyPrefix("Shielded",         1,   [0.5, 0.2, 0.0, 0.2],  [1,  1,  1,  1]),
+        new EnemyPrefix("Warded",           1,   [0.3, 0.3, 0.3, 0.3],  [1,  1,  1,  1]),
+        new EnemyPrefix("Shielded",         1,   [0.3, 0.1, 0.0, 0.1],  [1,  1,  1,  1]),
     ]
 
     static enemyPrefixAttribute: EnemyPrefix[] = [
@@ -153,7 +153,7 @@ class Enemy {
             this.name = this.prefix[i].name + " "
             this.maxhp *= this.prefix[i].modHP
             for (let j = 0; j < this.damResist.length; j++) {
-                this.damResist[j] = Math.max(0,Math.min(0.9, this.damResist[j] + this.prefix[i].modDamResist[j]))
+                this.damResist[j] = Math.max(0,Math.min(0.5, this.damResist[j] + this.prefix[i].modDamResist[j]))
                 this.damOutput[j] *= this.prefix[i].modDamOutput[j]
             }
         }
@@ -165,7 +165,7 @@ class Enemy {
 
         //add area effects
         for (let j = 0; j < this.damResist.length; j++) {
-            this.damResist[j] = Math.max(0,Math.min(0.9, this.damResist[j] + this.parentDungeonFloor.parentArea.enemyDamResist[j]))
+            this.damResist[j] = Math.max(0,Math.min(0.5, this.damResist[j] + this.parentDungeonFloor.parentArea.enemyDamResist[j]))
             //this.damOutput[j] *= this.prefix[i].modDamOutput[j]
         }
 

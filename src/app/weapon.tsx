@@ -62,6 +62,9 @@ class Weapon extends Item {
     name: string;
     swingSpeed: number;
 
+    totDam: number;
+    value: number;
+
 
     static damageLabels: string[] = ["Shp", "Blt", "Mgc", "Exp", "Bld"]//["Sharp", "Blunt", "Magic", "Explosive", "Bleed???"]
     static damageIcons: string[] = ["triangle", "square", "filter", "arrows-fullscreen", "droplet-fill"]
@@ -206,12 +209,17 @@ class Weapon extends Item {
         }
         this.damage[3] = this.type.baseDamage * explosiveMult
 
-        //levelize damage - x1.25/level
+        //levelize damage - x1.25/level. and get total dps
+        this.totDam = 0
         for (let i = 0; i < this.damage.length; i++) {
             this.damage[i] *= Math.pow(Player.weaponDamageScale,this.level)
+            this.totDam += this.damage[i]
         }
+        this.value = this.totDam * this.swingSpeed
 
         this.serialId = super.serialIdGenerator()
+
+
     }
 
     blendMod(input: number, blendAmount: number, center: number) {
@@ -220,7 +228,6 @@ class Weapon extends Item {
 
     getCardInfo() { //toCompare: Weapon | undefined
         var output = ""
-        var totDam = 0
         const width = "w-[5rem]"
 
         var preoutput = ""
@@ -235,7 +242,6 @@ class Weapon extends Item {
                 preoutput += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle ' + Weapon.damageColors[i] + " " + width + '">'
                 preoutput += '<i class="bi margin:auto bi-' + Weapon.damageIcons[i] + '"></i><br> ' + Weapon.formatString(this.damage[i], false) + " d/h<br/>" + Weapon.formatString(this.damage[i]*this.swingSpeed, false) + " d/s</span>"
             }
-            totDam += this.damage[i]
         }
 
         //constant tags
@@ -254,7 +260,7 @@ class Weapon extends Item {
 
         /** one box option*/
         output += '<span className="text-xs font-medium me-2 px-2.5 py-0.5 rounded inline-block text-center align-middle dark:bg-slate-500 dark:text-slate-300 ' + width + '">'
-        output += Weapon.formatString(this.swingSpeed, false) + " h/s<br/>" + Weapon.formatString(totDam, false) + " d/h<br/>" + Weapon.formatString(totDam*this.swingSpeed, false) + " d/s</span>"
+        output += Weapon.formatString(this.swingSpeed, false) + " h/s<br/>" + Weapon.formatString(this.totDam, false) + " d/h<br/>" + Weapon.formatString(this.totDam*this.swingSpeed, false) + " d/s</span>"
         //output += '<span className="float-left"><i class="bi bi-boxes"></i></span> ' + this.formatString(totDam*this.swingSpeed) + "/s<br/>" + this.formatString(totDam) + "/h<br/>" + this.formatString(1) + "h/s</span>"
 
 

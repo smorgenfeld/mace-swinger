@@ -48,6 +48,10 @@ class Player {
         this.curhp = this.maxhp
     }
 
+    heal(amount: number) {
+        this.curhp = Math.min(this.maxhp,this.maxhp*amount+ this.curhp)
+    }
+
     updateActiveWeapon() {
         this.curWeapon = this.inv[0]
     }
@@ -68,7 +72,25 @@ class Player {
     }
 
     addLoot(level: number) {
-        this.loot.push(new Weapon(level,"newItems"))
+        const newWeapon = new Weapon(level,"newItems")
+        if (this.loot.length < this.maxLootSize) {
+            this.loot.push(newWeapon)
+        }
+        else {
+            // delete bad weapons from loot pool
+            var minValue = this.loot[0].value
+            var minValueInd = 0
+            for (let i = 1; i < this.loot.length; i++) {
+                if (this.loot[i].value < minValue) {
+                    minValueInd = i
+                    minValue = this.loot[i].value
+                }
+            }
+
+            if (newWeapon.value > minValue) {
+                this.loot[minValueInd] = newWeapon
+            }
+        }
     }
 
     getHTMLResists() {

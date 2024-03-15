@@ -33,6 +33,7 @@ class DungeonFloor {
             this.enemyNum -= 1
             if (this.enemyNum == 0) {
                 Player.curPlayer.addLoot(this.level+1)
+                Player.curPlayer.heal(0.5)
                 return true
             }
             this.enemy.curhp = this.enemy.maxhp
